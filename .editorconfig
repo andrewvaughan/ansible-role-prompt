@@ -1,0 +1,20 @@
+# EditorConfig
+# http://EditorConfig.org
+
+root = true
+
+# Global project configurations
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+# Special cases for script and config files
+[*.{js,py,yml,cfg,ini}]
+charset = utf-8
+indent_style = space
+indent_size = 2
+
+# Makefiles require explicit tabs
+[Makefile]
+indent_style = tab
+indent_size = 4

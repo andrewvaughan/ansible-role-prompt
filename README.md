@@ -1,4 +1,4 @@
-# Message
+# Prompt
 
 [![Version][version-image]][github-release]
 [![License][license-image]][github-license]
@@ -7,6 +7,8 @@
 
 This [Ansible][ansible] module provides support to display simple messages to the user running a Playbook.  This
 provides a cleaner way to present messages to the user than with the built-in [debug][ansible-debug] task.
+Optionally, the message can also be treated as a prompt to await user feedback.  The response for these prompts can
+be registered as Ansible variables.
 
 ## Installation
 
@@ -81,16 +83,16 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 
 [version-image]:     http://img.shields.io/badge/release-0.0.0-blue.svg?style=flat
 [license-image]:     http://img.shields.io/badge/license-MIT-blue.svg?style=flat
-[build-image]:       https://travis-ci.org/andrewvaughan/ansible-message.svg?branch=master
-[coverage-image]:    https://coveralls.io/repos/github/andrewvaughan/ansible-message/badge.svg?branch=master
+[build-image]:       https://travis-ci.org/andrewvaughan/ansible-prompt.svg?branch=master
+[coverage-image]:    https://coveralls.io/repos/github/andrewvaughan/ansible-prompt/badge.svg?branch=master
 
-[github-contribute]: https://github.com/andrewvaughan/ansible-message/blob/master/.github/CONTRIBUTING.md
-[github-issue]:      https://github.com/andrewvaughan/ansible-message/issues
-[github-license]:    https://github.com/andrewvaughan/ansible-message/blob/master/LICENSE
-[github-release]:    https://github.com/andrewvaughan/ansible-message/releases
+[github-contribute]: https://github.com/andrewvaughan/ansible-prompt/blob/master/.github/CONTRIBUTING.md
+[github-issue]:      https://github.com/andrewvaughan/ansible-prompt/issues
+[github-license]:    https://github.com/andrewvaughan/ansible-prompt/blob/master/LICENSE
+[github-release]:    https://github.com/andrewvaughan/ansible-prompt/releases
 
-[travis-detail]:     https://travis-ci.org/andrewvaughan/ansible-message
-[coveralls-detail]:  https://coveralls.io/github/andrewvaughan/ansible-message?branch=master
+[travis-detail]:     https://travis-ci.org/andrewvaughan/ansible-prompt
+[coveralls-detail]:  https://coveralls.io/github/andrewvaughan/ansible-prompt?branch=master
 
 [ansible]:           https://www.ansible.com/
 [ansible-debug]:     http://docs.ansible.com/ansible/latest/debug_module.html
