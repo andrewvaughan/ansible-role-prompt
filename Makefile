@@ -5,10 +5,10 @@ dev-dependencies: dependencies
 	pip install -U -r requirements-dev.txt
 
 lint: dev-dependencies lint-docstring
-	echo "Code Linting Not Implemented"
+	@echo "Code Linting Not Implemented"
 
 lint-docstring: dev-dependencies
-	echo "DocString Linting Not Implemented"
+	@echo "DocString Linting Not Implemented"
 
 test: clean dev-dependencies lint
 	python -m unittest discover
