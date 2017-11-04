@@ -17,6 +17,9 @@ coverage: clean dev-dependencies lint
 	coverage run --source action_plugins test
 	coverage html
 
+docs: clean dev-dependencies
+	pydoc -w action_plugins
+
 clean:
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
