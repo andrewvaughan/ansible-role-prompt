@@ -34,520 +34,622 @@ from ansible.playbook.play_context import PlayContext as AnsiblePlayContext
 
 
 class TestPrompt(unittest.TestCase):
-  """
-  Tests the Ansible prompt action plugin.
-  """
-
-  def setUp(self):
     """
-    Sets up a prompt object before each test.
+    Tests the Ansible prompt action plugin.
+
+    .. class:: TestPrompt
+    .. versionadded:: 0.1.0
     """
-    self.prompt = self._getPrompt()
-    self.output = StringIO.StringIO()
 
-    self.prompt.setOutput(self.output)
+    def setUp(self):
+        """
+        Sets up a prompt object before each test.
 
-    self.response = {
-      "changed" : False
-    }
+        .. versionadded:: 0.1.0
+        .. function:: setUp()
+        """
+        self.prompt = self._getPrompt()
+        self.output = StringIO.StringIO()
 
-    self.expected = self.response.copy()
+        self.prompt.setOutput(self.output)
 
+        self.response = {
+            "changed": False
+        }
 
-  def _getPrompt(self):
-    """
-    Return a generic Prompt object.
+        self.expected = self.response.copy()
 
-      :returns: generic Prompt object
-    """
-    return Prompt(
-      task = AnsibleTask(),
-      connection = None,
-      play_context = AnsiblePlayContext(),
-      loader = None,
-      templar = None,
-      shared_loader_obj = None
-    )
 
+    def _getPrompt(self):
+        """
+        Return a generic Prompt object.
 
+        :returns: generic Prompt object
 
+        .. versionadded:: 0.1.0
+        .. function:: _getPrompt()
+        """
+        return Prompt(
+            task=AnsibleTask(),
+            connection=None,
+            play_context=AnsiblePlayContext(),
+            loader=None,
+            templar=None,
+            shared_loader_obj=None
+        )
 
-  ### setOutput(output)
 
-  def test_setOutput_default_valid(self):
-    """
-    Test that the default setting for a prompt is stdout.
-    """
-    prompt = self._getPrompt()
-    prompt.setOutput()
 
-    self.assertEquals(
-      prompt.output,
-      sys.stdout
-    )
 
+    # setOutput(output)
 
-  def test_setOutput_stringio_valid(self):
-    """
-    Test that an updated setting for setOutput() sticks.
-    """
-    prompt = self._getPrompt()
-    output = StringIO.StringIO()
+    def test_setOutput_default_valid(self):
+        """
+        Test that the default setting for a prompt is stdout.
 
-    prompt.setOutput(output)
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        prompt = self._getPrompt()
+        prompt.setOutput()
 
-    self.assertEquals(output, prompt.output)
-    self.assertEquals(output.getvalue(), "")
+        self.assertEquals(
+            prompt.output,
+            sys.stdout
+        )
 
-    prompt._prompt({}, "test")
 
-    self.assertEquals(output.getvalue(), "test\n")
+    def test_setOutput_stringio_valid(self):
+        """
+        Test that an updated setting for setOutput() sticks.
 
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        prompt = self._getPrompt()
+        output = StringIO.StringIO()
 
+        prompt.setOutput(output)
 
+        self.assertEquals(output, prompt.output)
+        self.assertEquals(output.getvalue(), "")
 
-  ### _fail(result, msg, args*)
+        prompt._prompt({}, "test")
 
-  def test_fail_params_missing_exception(self):
-    """
-    Test that the _fail() method throws an exception if all parameters are missing.
-    """
-    with self.assertRaises(TypeError):
-      self.prompt._fail()
+        self.assertEquals(output.getvalue(), "test\n")
 
 
-  def test_fail_response_missing_exception(self):
-    """
-    Test that the _fail() method throws an exception if the response is missing.
-    """
-    with self.assertRaises(TypeError):
-      self.prompt._fail(None, "Failure Message")
 
 
-  def test_fail_response_invalid_exception(self):
-    """
-    Test that the _fail() method throws an exception if the response is not a dict.
-    """
-    with self.assertRaises(TypeError):
-      self.prompt._fail("Bad Result", "Failure Message")
+    # _fail(result, msg, args*)
 
+    def test_fail_params_missing_exception(self):
+        """
+        Test that the _fail() method throws an exception if all parameters are missing.
 
-  def test_fail_message_missing_exception(self):
-    """
-    Test that the _fail() method throws an exception if no message is provided.
-    """
-    with self.assertRaises(TypeError):
-      self.prompt._fail(self.response)
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        with self.assertRaises(TypeError):
+            self.prompt._fail()
 
 
-  def test_fail_message_empty_exception(self):
-    """
-    Test that the _fail() method throws an exception if an empty message is provided.
-    """
-    with self.assertRaises(ValueError):
-      self.prompt._fail(self.response, "")
+    def test_fail_response_missing_exception(self):
+        """
+        Test that the _fail() method throws an exception if the response is missing.
 
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        with self.assertRaises(TypeError):
+            self.prompt._fail(None, "Failure Message")
 
-  def test_fail_message_nonstring_exception(self):
-    """
-    Test that the _fail() method throws an exception if a non-string message is provided.
-    """
-    with self.assertRaises(TypeError):
-      self.prompt._fail(self.response, 45)
-      self.prompt._fail(self.response, {"hello" : "bar"})
-      self.prompt._fail(self.response, ["a", "b"])
 
+    def test_fail_response_invalid_exception(self):
+        """
+        Test that the _fail() method throws an exception if the response is not a dict.
 
-  def test_fail_message_valid_success(self):
-    """
-    Tests that the _fail() method returns an expected response.
-    """
-    self.expected['failed'] = True
-    self.expected['msg'] = "Failure Message"
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        with self.assertRaises(TypeError):
+            self.prompt._fail("Bad Result", "Failure Message")
 
-    self.assertEquals(
-      self.prompt._fail(self.response, "Failure Message"),
-      self.expected
-    )
 
+    def test_fail_message_missing_exception(self):
+        """
+        Test that the _fail() method throws an exception if no message is provided.
 
-  def test_fail_message_valid_success(self):
-    """
-    Test that the _fail() method returns an expected response with multiple variables.
-    """
-    self.expected['failed'] = True
-    self.expected['msg'] = "Failure Message A 3.14 Cats"
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        with self.assertRaises(TypeError):
+            self.prompt._fail(self.response)
 
-    self.assertEquals(
-      self.prompt._fail(self.response, "Failure Message %s %.2f %s", "A", 3.14159, "Cats"),
-      self.expected
-    )
 
+    def test_fail_message_empty_exception(self):
+        """
+        Test that the _fail() method throws an exception if an empty message is provided.
 
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        with self.assertRaises(ValueError):
+            self.prompt._fail(self.response, "")
 
 
-  ### _prompt(result, msg)
+    def test_fail_message_nonstring_exception(self):
+        """
+        Test that the _fail() method throws an exception if a non-string message is provided.
 
-  def test_prompt_param_invalid_fails(self):
-    """
-    Test that the _prompt() method returns a failure if given a bad, top-level parameter name.
-    """
-    self.expected['failed'] = True
-    self.expected['msg'] = "Unexpected parameter 'foo'"
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        with self.assertRaises(TypeError):
+            self.prompt._fail(self.response, 45)
+            self.prompt._fail(self.response, {"hello": "bar"})
+            self.prompt._fail(self.response, ["a", "b"])
 
-    self.assertEquals(
-      self.prompt._prompt(self.response, {
-        "foo" : "bar"
-      }),
-      self.expected
-    )
 
+    def test_fail_message_valid_success(self):
+        """
+        Tests that the _fail() method returns an expected response.
 
-  def test_prompt_msg_emptystring_fails(self):
-    """
-    Test that the _prompt() method returns a failure if an empty string is provided for the message.
-    """
-    self.expected['failed'] = True
-    self.expected['msg'] = "No message provided"
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "Failure Message"
 
-    self.assertEquals(
-      self.prompt._prompt(self.response, ""),
-      self.expected
-    )
+        self.assertEquals(
+            self.prompt._fail(self.response, "Failure Message"),
+            self.expected
+        )
 
 
-  def test_prompt_msg_emptylist_fails(self):
-    """
-    Test that the _prompt() method returns a failure if an empty list is provided for the message.
-    """
-    self.expected['failed'] = True
-    self.expected['msg'] = "No message provided"
+    def test_fail_message_valid_success(self):
+        """
+        Test that the _fail() method returns an expected response with multiple variables.
 
-    self.assertEquals(
-      self.prompt._prompt(self.response, []),
-      self.expected
-    )
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "Failure Message A 3.14 Cats"
 
+        self.assertEquals(
+            self.prompt._fail(self.response, "Failure Message %s %.2f %s", "A", 3.14159, "Cats"),
+            self.expected
+        )
 
-  def test_prompt_msg_emptyobject_fails(self):
-    """
-    Test that the _prompt() method returns a failure if an empty object is provided for the message.
-    """
-    self.expected['failed'] = True
-    self.expected['msg'] = "No message provided"
 
-    self.assertEquals(
-      self.prompt._prompt(self.response, {}),
-      self.expected
-    )
 
 
-  def test_prompt_msg_none_fails(self):
-    """
-    Test that the _prompt() method returns a failure if no message is provided.
-    """
-    self.expected['failed'] = True
-    self.expected['msg'] = "No message provided"
+    # _prompt(result, msg)
 
-    self.assertEquals(
-      self.prompt._prompt(self.response, None),
-      self.expected
-    )
+    def test_prompt_param_invalid_fails(self):
+        """
+        Test that the _prompt() method returns a failure if given a bad, top-level parameter name.
 
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "Unexpected parameter 'foo'"
 
-  def test_prompt_msg_string_succeeds(self):
-    """
-    Test that the _prompt() method is successful if given a simple string.
-    """
-    msg = "Hello World"
+        self.assertEquals(
+            self.prompt._prompt(self.response, {
+                "foo": "bar"
+            }),
+            self.expected
+        )
 
-    self.assertTrue(isinstance(msg, str))
 
-    self.assertEquals(
-      self.prompt._prompt(self.response, msg),
-      self.expected
-    )
+    def test_prompt_msg_emptystring_fails(self):
+        """
+        Test that the _prompt() method returns a failure if an empty string is provided for the message.
 
-    self.assertEquals(self.output.getvalue(), "%s\n" % msg)
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "No message provided"
 
+        self.assertEquals(
+            self.prompt._prompt(self.response, ""),
+            self.expected
+        )
 
-  def test_prompt_msg_int_succeeds(self):
-    """
-    Test that the _prompt() method is successful if given a simple integer.
-    """
-    msg = 1
 
-    self.assertTrue(isinstance(msg, int))
+    def test_prompt_msg_emptylist_fails(self):
+        """
+        Test that the _prompt() method returns a failure if an empty list is provided for the message.
 
-    self.assertEquals(
-      self.prompt._prompt(self.response, msg),
-      self.expected
-    )
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "No message provided"
 
-    self.assertEquals(self.output.getvalue(), "%s\n" % str(msg))
+        self.assertEquals(
+            self.prompt._prompt(self.response, []),
+            self.expected
+        )
 
 
-  def test_prompt_msg_long_succeeds(self):
-    """
-    Test that the _prompt() method is successful if given a simple long.
-    """
-    msg = sys.maxint + 1
+    def test_prompt_msg_emptyobject_fails(self):
+        """
+        Test that the _prompt() method returns a failure if an empty object is provided for the message.
 
-    self.assertTrue(isinstance(msg, long))
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "No message provided"
 
-    self.assertEquals(
-      self.prompt._prompt(self.response, msg),
-      self.expected
-    )
+        self.assertEquals(
+            self.prompt._prompt(self.response, {}),
+            self.expected
+        )
 
-    self.assertEquals(self.output.getvalue(), "%s\n" % str(msg))
 
+    def test_prompt_msg_none_fails(self):
+        """
+        Test that the _prompt() method returns a failure if no message is provided.
 
-  def test_prompt_msg_float_succeeds(self):
-    """
-    Test that the _prompt() method is successful if given a simple float.
-    """
-    msg = 1.1
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "No message provided"
 
-    self.assertTrue(isinstance(msg, float))
+        self.assertEquals(
+            self.prompt._prompt(self.response, None),
+            self.expected
+        )
 
-    self.assertEquals(
-      self.prompt._prompt(self.response, msg),
-      self.expected
-    )
 
-    self.assertEquals(self.output.getvalue(), "%s\n" % str(msg))
+    def test_prompt_msg_string_succeeds(self):
+        """
+        Test that the _prompt() method is successful if given a simple string.
 
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        msg = "Hello World"
 
-  def test_prompt_msg_complex_succeeds(self):
-    """
-    Test that the _prompt() method is successful if given a simple complex.
-    """
-    msg = complex(1, 5)
+        self.assertTrue(isinstance(msg, str))
 
-    self.assertTrue(isinstance(msg, complex))
+        self.assertEquals(
+            self.prompt._prompt(self.response, msg),
+            self.expected
+        )
 
-    self.assertEquals(
-      self.prompt._prompt(self.response, msg),
-      self.expected
-    )
+        self.assertEquals(self.output.getvalue(), "%s\n" % msg)
 
-    self.assertEquals(self.output.getvalue(), "%s\n" % str(msg))
 
+    def test_prompt_msg_int_succeeds(self):
+        """
+        Test that the _prompt() method is successful if given a simple integer.
 
-  def test_prompt_msg_tuple_succeeds(self):
-    """
-    Test that the _prompt() method is successful if given a simple tuple.
-    """
-    msg = (1, 5)
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        msg = 1
 
-    self.assertTrue(isinstance(msg, tuple))
+        self.assertTrue(isinstance(msg, int))
 
-    self.assertEquals(
-      self.prompt._prompt(self.response, msg),
-      self.expected
-    )
+        self.assertEquals(
+            self.prompt._prompt(self.response, msg),
+            self.expected
+        )
 
-    self.assertEquals(self.output.getvalue(), "%s\n" % str(msg))
+        self.assertEquals(self.output.getvalue(), "%s\n" % str(msg))
 
 
-  def test_prompt_msg_set_succeeds(self):
-    """
-    Test that the _prompt() method is successful if given a simple set.
-    """
-    msg = set([1, 5, 50, "alpha"])
+    def test_prompt_msg_long_succeeds(self):
+        """
+        Test that the _prompt() method is successful if given a simple long.
 
-    self.assertTrue(isinstance(msg, set))
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        msg = sys.maxint + 1
 
-    self.assertEquals(
-      self.prompt._prompt(self.response, msg),
-      self.expected
-    )
+        self.assertTrue(isinstance(msg, long))
 
-    self.assertEquals(self.output.getvalue(), "%s\n" % str(msg))
+        self.assertEquals(
+            self.prompt._prompt(self.response, msg),
+            self.expected
+        )
 
+        self.assertEquals(self.output.getvalue(), "%s\n" % str(msg))
 
-  def test_prompt_msg_frozenset_succeeds(self):
-    """
-    Test that the _prompt() method is successful if given a simple frozenset.
-    """
-    msg = frozenset([-5, 5, 5.0, "beta"])
 
-    self.assertTrue(isinstance(msg, frozenset))
+    def test_prompt_msg_float_succeeds(self):
+        """
+        Test that the _prompt() method is successful if given a simple float.
 
-    self.assertEquals(
-      self.prompt._prompt(self.response, msg),
-      self.expected
-    )
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        msg = 1.1
 
-    self.assertEquals(self.output.getvalue(), "%s\n" % str(msg))
+        self.assertTrue(isinstance(msg, float))
 
+        self.assertEquals(
+            self.prompt._prompt(self.response, msg),
+            self.expected
+        )
 
-  def test_prompt_msg_listparam_invalid_fails(self):
-    """
-    Test that the _prompt() method fails if given a list with an invalid parameter in it.
-    """
-    self.expected['failed'] = True
-    self.expected['msg'] = "Unexpected parameter 'foo'"
+        self.assertEquals(self.output.getvalue(), "%s\n" % str(msg))
 
-    self.assertEquals(
-      self.prompt._prompt(self.response, [
-        { "say" : "valid" },
-        { "foo" : "bar" }
-      ]),
-      self.expected
-    )
 
-    self.assertEquals(self.output.getvalue(), "valid\n")
+    def test_prompt_msg_complex_succeeds(self):
+        """
+        Test that the _prompt() method is successful if given a simple complex.
 
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        msg = complex(1, 5)
 
-  def test_prompt_msg_list_empty_fails(self):
-    """
-    Test that the _prompt() method fails if given an empty list.
-    """
-    self.expected['failed'] = True
-    self.expected['msg'] = "No message provided"
+        self.assertTrue(isinstance(msg, complex))
 
-    self.assertEquals(
-      self.prompt._prompt(self.response, []),
-      self.expected
-    )
+        self.assertEquals(
+            self.prompt._prompt(self.response, msg),
+            self.expected
+        )
 
+        self.assertEquals(self.output.getvalue(), "%s\n" % str(msg))
 
-  def test_prompt_msg_list_succeeds(self):
-    """
-    Test that the _prompt() method is successful if given multiple, simple strings.
-    """
-    msg = [
-      "alpha",
-      "bravo",
-      -7,
-      1.5
-    ]
 
-    self.assertTrue(isinstance(msg, list))
+    def test_prompt_msg_tuple_succeeds(self):
+        """
+        Test that the _prompt() method is successful if given a simple tuple.
 
-    self.assertEquals(
-      self.prompt._prompt(self.response, msg),
-      self.expected
-    )
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        msg = (1, 5)
 
-    self.assertEquals(self.output.getvalue(), "%s\n" % ("\n".join([str(m) for m in msg])))
+        self.assertTrue(isinstance(msg, tuple))
 
+        self.assertEquals(
+            self.prompt._prompt(self.response, msg),
+            self.expected
+        )
 
-  def test_prompt_msg_listsay_succeeds(self):
-    """
-    Test that the _prompt() method is successful if given multiple, simple strings.
-    """
-    msg = [
-      { "say" : "a" },
-      { "say" : "B" },
-      { "say" : -20 },
-      { "say" : 5.5 },
-    ]
+        self.assertEquals(self.output.getvalue(), "%s\n" % str(msg))
 
-    self.assertTrue(isinstance(msg, list))
 
-    self.assertEquals(
-      self.prompt._prompt(self.response, msg),
-      self.expected
-    )
+    def test_prompt_msg_set_succeeds(self):
+        """
+        Test that the _prompt() method is successful if given a simple set.
 
-    self.assertEquals(self.output.getvalue(), "%s\n" % ("\n".join([str(m['say']) for m in msg])))
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        msg = set([1, 5, 50, "alpha"])
 
+        self.assertTrue(isinstance(msg, set))
 
+        self.assertEquals(
+            self.prompt._prompt(self.response, msg),
+            self.expected
+        )
 
+        self.assertEquals(self.output.getvalue(), "%s\n" % str(msg))
 
-  # run(tmp=None, task_vars=None)
 
-  def test_run_msg_missing_fails(self):
-    """
-    Test that the run() method will fail if missing the msg parameter.
-    """
-    self.expected['failed'] = True
-    self.expected['msg'] = "Required 'msg' parameter missing."
+    def test_prompt_msg_frozenset_succeeds(self):
+        """
+        Test that the _prompt() method is successful if given a simple frozenset.
 
-    del(self.expected['changed'])
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        msg = frozenset([-5, 5, 5.0, "beta"])
 
-    prompt = self._getPrompt()
+        self.assertTrue(isinstance(msg, frozenset))
 
-    prompt.setOutput(self.output)
+        self.assertEquals(
+            self.prompt._prompt(self.response, msg),
+            self.expected
+        )
 
-    self.assertEquals(
-      prompt.run(),
-      self.expected
-    )
+        self.assertEquals(self.output.getvalue(), "%s\n" % str(msg))
 
 
-  def test_run_multiple_params_fails(self):
-    """
-    Test that the run() method will fail if there are too many parameters.
-    """
-    self.expected['failed'] = True
-    self.expected['msg'] = "Expected single 'msg' parameter. Multiple parameters given."
+    def test_prompt_msg_listparam_invalid_fails(self):
+        """
+        Test that the _prompt() method fails if given a list with an invalid parameter in it.
 
-    del(self.expected['changed'])
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "Unexpected parameter 'foo'"
 
-    prompt = self._getPrompt()
+        self.assertEquals(
+            self.prompt._prompt(self.response, [
+                {"say": "valid"},
+                {"foo": "bar"}
+            ]),
+            self.expected
+        )
 
-    prompt.setOutput(self.output)
-    prompt._task.args = {
-      "msg" : "Hello World",
-      "foo" : "bar"
-    }
+        self.assertEquals(self.output.getvalue(), "valid\n")
 
-    self.assertEquals(
-      prompt.run(),
-      self.expected
-    )
 
+    def test_prompt_msg_list_empty_fails(self):
+        """
+        Test that the _prompt() method fails if given an empty list.
 
-  def test_run_singlemessage_valid(self):
-    """
-    Test that the run() method will fail if there are too many parameters.
-    """
-    del(self.expected['changed'])
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "No message provided"
 
-    prompt = self._getPrompt()
+        self.assertEquals(
+            self.prompt._prompt(self.response, []),
+            self.expected
+        )
 
-    prompt.setOutput(self.output)
-    prompt._task.args = {
-      "msg" : "Hello World"
-    }
 
-    self.assertEquals(
-      prompt.run(),
-      self.expected
-    )
+    def test_prompt_msg_list_succeeds(self):
+        """
+        Test that the _prompt() method is successful if given multiple, simple strings.
 
-    self.assertEquals(
-      self.output.getvalue(),
-      "Hello World\n"
-    )
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        msg = [
+            "alpha",
+            "bravo",
+            -7,
+            1.5
+        ]
 
+        self.assertTrue(isinstance(msg, list))
 
-  def test_run_multimessage_valid(self):
-    """
-    Test that the run() method will fail if there are too many parameters.
-    """
-    del(self.expected['changed'])
-
-    prompt = self._getPrompt()
-
-    prompt.setOutput(self.output)
-    prompt._task.args = {
-      "msg" : [
-        "Hello World",
-        "Hi there"
-      ]
-    }
-
-    self.assertEquals(
-      prompt.run(),
-      self.expected
-    )
-
-    self.assertEquals(
-      self.output.getvalue(),
-      "Hello World\nHi there\n"
-    )
+        self.assertEquals(
+            self.prompt._prompt(self.response, msg),
+            self.expected
+        )
+
+        self.assertEquals(self.output.getvalue(), "%s\n" % ("\n".join([str(m) for m in msg])))
+
+
+    def test_prompt_msg_listsay_succeeds(self):
+        """
+        Test that the _prompt() method is successful if given multiple, simple strings.
+
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        msg = [
+            {"say": "a"},
+            {"say": "B"},
+            {"say": -20},
+            {"say": 5.5},
+        ]
+
+        self.assertTrue(isinstance(msg, list))
+
+        self.assertEquals(
+            self.prompt._prompt(self.response, msg),
+            self.expected
+        )
+
+        self.assertEquals(self.output.getvalue(), "%s\n" % ("\n".join([str(m['say']) for m in msg])))
+
+
+
+
+    # run(tmp=None, task_vars=None)
+
+    def test_run_msg_missing_fails(self):
+        """
+        Test that the run() method will fail if missing the msg parameter.
+
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "Required 'msg' parameter missing."
+
+        del(self.expected['changed'])
+
+        prompt = self._getPrompt()
+
+        prompt.setOutput(self.output)
+
+        self.assertEquals(
+            prompt.run(),
+            self.expected
+        )
+
+
+    def test_run_multiple_params_fails(self):
+        """
+        Test that the run() method will fail if there are too many parameters.
+
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "Expected single 'msg' parameter. Multiple parameters given."
+
+        del(self.expected['changed'])
+
+        prompt = self._getPrompt()
+
+        prompt.setOutput(self.output)
+        prompt._task.args = {
+            "msg": "Hello World",
+            "foo": "bar"
+        }
+
+        self.assertEquals(
+            prompt.run(),
+            self.expected
+        )
+
+
+    def test_run_singlemessage_valid(self):
+        """
+        Test that the run() method will fail if there are too many parameters.
+
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        del(self.expected['changed'])
+
+        prompt = self._getPrompt()
+
+        prompt.setOutput(self.output)
+        prompt._task.args = {
+            "msg": "Hello World"
+        }
+
+        self.assertEquals(
+            prompt.run(),
+            self.expected
+        )
+
+        self.assertEquals(
+            self.output.getvalue(),
+            "Hello World\n"
+        )
+
+
+    def test_run_multimessage_valid(self):
+        """
+        Test that the run() method will fail if there are too many parameters.
+
+        .. versionadded:: 0.1.0
+        .. function:: ()
+        """
+        del(self.expected['changed'])
+
+        prompt = self._getPrompt()
+
+        prompt.setOutput(self.output)
+        prompt._task.args = {
+            "msg": [
+                "Hello World",
+                "Hi there"
+            ]
+        }
+
+        self.assertEquals(
+            prompt.run(),
+            self.expected
+        )
+
+        self.assertEquals(
+            self.output.getvalue(),
+            "Hello World\nHi there\n"
+        )

@@ -5,7 +5,7 @@ dev-dependencies: dependencies
 	pip install -U -r requirements-dev.txt
 
 lint: dev-dependencies lint-docstring
-	@echo "Code Linting Not Implemented"
+	pycodestyle --show-pep8 --show-source ./
 
 lint-docstring: dev-dependencies
 	@echo "DocString Linting Not Implemented"
