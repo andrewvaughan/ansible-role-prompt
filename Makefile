@@ -2,7 +2,7 @@ dependencies:
 	pip install -U -r requirements.txt
 
 dev-dependencies: dependencies
-	pip install -U coverage
+	pip install -U -r requirements-dev.txt
 
 lint: dev-dependencies lint-docstring
 	echo "Code Linting Not Implemented"
