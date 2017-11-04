@@ -1,0 +1,17 @@
+language: python
+sudo: false
+python:
+    - "2.7"
+
+cache:
+    directories:
+        - $HOME/.cache/pip
+
+install:
+    - travis_retry pip install -q -r requirements.txt
+    - travis_retry pip install -q -r requirements-dev.txt
+
+script:
+    - pycodestyle --show-pep8 --show-source ./
+    - pydocstyle --explain --source ./
+    - python -m unittest discover -v
