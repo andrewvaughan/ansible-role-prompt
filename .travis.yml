@@ -14,4 +14,5 @@ install:
 script:
     - pycodestyle --show-pep8 --show-source ./
     - pydocstyle --explain --source ./
-    - python -m unittest discover -v
+    - coverage run --source action_plugins test
+    - coveralls
