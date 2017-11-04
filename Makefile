@@ -8,7 +8,7 @@ lint: dev-dependencies lint-docstring
 	pycodestyle --show-pep8 --show-source ./
 
 lint-docstring: dev-dependencies
-	@echo "DocString Linting Not Implemented"
+	pydocstyle --explain --source ./
 
 test: clean dev-dependencies lint
 	python -m unittest discover

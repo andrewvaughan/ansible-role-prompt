@@ -43,7 +43,7 @@ class ActionModule(ActionBase):
 
     def __init__(self, task, connection, play_context, loader, templar, shared_loader_obj):
         """
-        Initializes the prompt Ansible plugin.
+        Initialize the prompt Ansible plugin.
 
         .. versionadded:: 0.1.0
         .. function:: __init__(task, connection, play_context, loader, templar, shared_loader_obj)
@@ -54,7 +54,7 @@ class ActionModule(ActionBase):
 
     def run(self, tmp=None, task_vars=None):
         """
-        Performs the plugin task, prompting the user one or more times.
+        Perform the plugin task, prompting the user one or more times.
 
         :kwarg tmp: the temporary directory to use if creating files
         :kwarg task_vars: any variables associated with the task
@@ -82,7 +82,7 @@ class ActionModule(ActionBase):
 
     def setOutput(self, output=None):
         """
-        Sets the output stream to write to.
+        Set the output stream to write to.
 
         :kwarg output: an output stream to write to
 
@@ -142,7 +142,7 @@ class ActionModule(ActionBase):
 
     def _fail(self, result, message, *args):
         """
-        Raises an Ansible exception with a given message.
+        Raise an Ansible exception with a given message.
 
         :kwarg result: the base result object to build on
         :kwarg message: the message to pass to the Ansible exception
