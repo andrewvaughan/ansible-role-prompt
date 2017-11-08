@@ -20,15 +20,25 @@ Coming soon.
 
 ## Usage
 
-Coming soon.
+Functionality is currently very limited for the Ansible Prompt module.  At this point, only messaging the user is
+supported.
 
-### Variables
+The Ansible Prompt plugin takes a single parameter, `msg`, which can contain one-or-more messages for the user.
+Examples tasks are as follows:
 
-Coming soon.
+```yaml
+- name: Simple Message
+  prompt:
+    msg: Hello World
 
-### Example
+- name: Multiple Messages
+  prompt:
+    msg:
+      - Hello World
+      - Hello Universe
+```
 
-TK
+More functionality will be made available in future versions of this plugin.
 
 ## Contributing
 
