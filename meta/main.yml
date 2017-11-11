@@ -1,0 +1,50 @@
+---
+galaxy_info:
+  author: Andrew Vaughan
+  description: Ansible role that provides functionality for messaging prompting users during tasks.
+  license: MIT
+
+  min_ansible_version: 2.0
+
+  platforms:
+    - name: EL
+      versions:
+      - all
+    - name: GenericUNIX
+      versions:
+      - all
+    - name: Fedora
+      versions:
+      - all
+    - name: opensuse
+      versions:
+      - all
+    - name: Amazon
+      versions:
+      - all
+    - name: GenericBSD
+      versions:
+      - all
+    - name: FreeBSD
+      versions:
+      - all
+    - name: Ubuntu
+      versions:
+      - all
+    - name: SLES
+      versions:
+      - all
+    - name: GenericLinux
+      versions:
+      - all
+    - name: Debian
+      versions:
+      - all
+
+  categories:
+    - development
+    - messaging
+    - prompt
+    - system
+
+dependencies: []
