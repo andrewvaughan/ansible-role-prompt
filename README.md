@@ -12,13 +12,27 @@ be registered as Ansible variables.
 
 ## Installation
 
-Coming Soon - Ansible Galaxy instructions.
+This plugin is made available in [Ansible Galaxy](https://galaxy.ansible.com/).  Once Ansible Galaxy is installed, you
+may install this plugin with the following command:
+
+```bash
+ansible-galaxy install andrewvaughan.ansible-prompt
+```
+
+To use this plugin, simply add the role to your playbook file with the following addition:
+
+```yml
+roles:
+- andrewvaughan.ansible-prompt
+```
+
+Once completed, you may use the entire plugin as described in the [Usage Guidelines](#usage)
 
 ### Manual Installation
 
 To add this plugin to your project, simply copy the `/action_plugins/prompt.py` file to a folder named
 `action_plugins` in your playbook root directory.  Ansible will automatically find and enable all commands made
-available by the plugin, as detailed in the [Usage](#usage) guidelines.
+available by the plugin, as detailed in the [Usage Guidelines](#usage).
 
 ### Dependencies
 
