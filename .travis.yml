@@ -16,3 +16,6 @@ script:
     - pydocstyle --explain --source ./
     - coverage run --source action_plugins test
     - coveralls
+
+notifications:
+    webhooks: https://galaxy.ansible.com/api/v1/notifications/

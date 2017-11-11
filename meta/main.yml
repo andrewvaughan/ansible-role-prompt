@@ -4,6 +4,8 @@ galaxy_info:
   description: Ansible role that provides functionality for messaging prompting users during tasks.
   license: MIT
 
+  github_branch: release
+
   min_ansible_version: 2.0
 
   platforms:
