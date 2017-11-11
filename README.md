@@ -12,11 +12,18 @@ be registered as Ansible variables.
 
 ## Installation
 
-Coming soon.
+Coming Soon - Ansible Galaxy instructions.
+
+### Manual Installation
+
+To add this plugin to your project, simply copy the `/action_plugins/prompt.py` file to a folder named
+`action_plugins` in your playbook root directory.  Ansible will automatically find and enable all commands made
+available by the plugin, as detailed in the [Usage](#usage) guidelines.
 
 ### Dependencies
 
-Coming soon.
+This module has been tested with [Ansibe][ansible] v2.0 and above.  It may work with other versions, but they are not
+formally supported.  Once Ansible and it's dependencies have been installed, this plugin should be usable.
 
 ## Usage
 
