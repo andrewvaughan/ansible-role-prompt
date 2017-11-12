@@ -59,7 +59,58 @@ Examples tasks are as follows:
       - Hello Universe
 ```
 
-More functionality will be made available in future versions of this plugin.
+### Gathering Facts From User Input
+
+The strength of the prompt plugin comes from its ability to gather Ansible facts, as a task, during the run of a
+playbook.  To turn your prompt into a question, provide a `say` and `ask` set of variables for each question you wish
+to ask.
+
+The `say` variable contains the message you wish to present, while the `ask` variable is the Ansible variable to
+set globally from the user's input:
+
+```yaml
+- name: Simple Question
+  prompt:
+    msg:
+      say: "What is your first name?"
+      ask: first_name
+
+- debug:
+    var: first_name
+```
+
+As you can see, a `first_name` variable is set with the user's input during playback.
+
+You may optionally ask multiple questions in the same prompt:
+
+```yaml
+- name: Address Information
+  prompt:
+    msg:
+      - say: "Street Address:"
+        ask: address
+      - say: "City:"
+        ask: city
+      - say: "State:"
+        ask: state
+      - say: "Zip Code:"
+        ask: zipcode
+```
+
+All variables will be created upon the task's completion.  Note that variables *cannot* be used until the task is
+completed, so this will not work:
+
+```yaml
+- name: Address Information
+  prompt:
+    msg:
+      - say: "First Name:"
+        ask: first_name
+      - say: "Hello {{ first_name }}!  What's your favorite color?"
+        ask: color
+```
+
+Instead, these questions should be split into two separate `prompt` tasks.
 
 ## Contributing
 
