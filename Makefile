@@ -1,8 +1,8 @@
 dependencies:
-	pip install -U -r requirements.txt
+	pip install -q -U -r requirements.txt
 
 dev-dependencies: dependencies
-	pip install -U -r requirements-dev.txt
+	pip install -q -U -r requirements-dev.txt
 
 lint: dev-dependencies lint-docstring
 	pycodestyle --show-pep8 --show-source ./
