@@ -174,7 +174,7 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 ```
 
 
-[version-image]:     http://img.shields.io/badge/release-0.1.0-blue.svg?style=flat
+[version-image]:     http://img.shields.io/badge/release-0.2.0-blue.svg?style=flat
 [license-image]:     http://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [build-image]:       https://travis-ci.org/andrewvaughan/ansible-prompt.svg?branch=master
 [coverage-image]:    https://coveralls.io/repos/github/andrewvaughan/ansible-prompt/badge.svg?branch=master
