@@ -24,6 +24,7 @@ ActionModule definition for the Ansible prompt action plugin.
 
 __metaclass__ = type
 
+import re
 import sys
 
 from ansible.plugins.action import ActionBase
@@ -35,10 +36,13 @@ class ActionModule(ActionBase):
 
     .. class:: ActionModule
     .. versionadded:: 0.1.0
+
+    .. versionchanged:: 0.2.0
+       Added user input prompting functionality.
     """
 
     TRANSFERS_FILES = False
-    VALID_PARAMS = ["say"]
+    VALID_PARAMS = ['say', 'ask']
 
 
     def __init__(self, task, connection, play_context, loader, templar, shared_loader_obj):
@@ -46,10 +50,19 @@ class ActionModule(ActionBase):
         Initialize the prompt Ansible plugin.
 
         .. versionadded:: 0.1.0
+
+        .. versionchanged:: 0.2.0
+           Precompiled regular expressions for input variable validation.  Added input setting.
+
         .. function:: __init__(task, connection, play_context, loader, templar, shared_loader_obj)
         """
         super(ActionModule, self).__init__(task, connection, play_context, loader, templar, shared_loader_obj)
+
         self.setOutput(sys.stdout)
+        self.setInput('/dev/tty')
+
+        # Pre-compile our regex for checking valid variables
+        self.rValidVariable = re.compile(r"^[A-Za-z0-9_]+$")
 
 
     def run(self, tmp=None, task_vars=None):
@@ -80,20 +93,36 @@ class ActionModule(ActionBase):
         return self._prompt(result, args['msg'])
 
 
-    def setOutput(self, output=None):
+    def setOutput(self, outstr=None):
         """
         Set the output stream to write to.
 
-        :kwarg output: an output stream to write to
+        :kwarg outstr: an output stream to write to (defaults to sys.stdout)
 
         .. versionadded:: 0.1.0
-        .. function:: setOutput([output=None])
+        .. function:: setOutput([outstr=None])
         """
-        if output is None:
-            self.output = sys.stdout
+        if outstr is None:
+            self._outstr = sys.stdout
 
         else:
-            self.output = output
+            self._outstr = outstr
+
+
+    def setInput(self, instr=None):
+        """
+        Set the input stream to read from.
+
+        :kwarg instr: an input stream to read from (defaults to '/dev/tty')
+
+        .. versionadded:: 0.2.0
+        .. function:: setInput([instr=None])
+        """
+        if instr is None:
+            self._instr = '/dev/tty'
+
+        else:
+            self._instr = instr
 
 
     def _prompt(self, result, msg):
@@ -106,6 +135,10 @@ class ActionModule(ActionBase):
         :returns: an updated dict response with success or failure
 
         .. versionadded:: 0.1.0
+
+        .. versionchanged:: 0.2.0
+           Added user input prompting functionality.
+
         .. function:: _prompt(result, msg)
         """
         if not isinstance(msg, list):
@@ -126,7 +159,7 @@ class ActionModule(ActionBase):
 
             # If a simple scalar value is provided, simply display it
             if not isinstance(m, dict):
-                self.output.write("%s\n" % m)
+                self._outstr.write("%s\n" % m)
                 continue
 
             # If this is a set of key/value pairs, parse it
@@ -134,8 +167,42 @@ class ActionModule(ActionBase):
                 if arg not in self.VALID_PARAMS:
                     return self._fail(result, "Unexpected parameter '%s'" % arg)
 
-            if 'say' in m:
-                self.output.write("%s\n" % m['say'])
+            # If this is a prompt, ask it as such
+            if 'ask' in m:
+
+                # Check for valid variable name
+                if m['ask'] is None or str(m['ask']).strip() == "":
+                    return self._fail(result, "Parameter 'ask' must provide variable name.  Empty received.")
+
+                # Check for illegal ansible characters
+                if not self.rValidVariable.search(m['ask']):
+                    return self._fail(result, "Invalid character in 'ask' parameter '%s'.", m['ask'])
+
+                # Convert to terminal input temporarily
+                oldin = sys.stdin
+
+                if isinstance(self._instr, str):
+                    sys.stdin = open(self._instr)
+                else:
+                    sys.stdin = self._instr
+
+                # Present empty string is "say" not provided
+                askstr = ("%s " % m['say']) if 'say' in m else ''
+
+                var = raw_input(askstr)
+
+                # Revert to previous setting
+                sys.stdin = oldin
+
+                if 'ansible_facts' not in result:
+                    result['ansible_facts'] = dict()
+
+                result['ansible_facts'][m['ask']] = var
+
+            # If it's just a message, print it
+            elif 'say' in m:
+                self._outstr.write("%s\n" % m['say'])
+
 
         return result
 
@@ -156,8 +223,8 @@ class ActionModule(ActionBase):
         if not isinstance(result, dict):
             raise TypeError("Invalid result provided. Expected dict, received %s." % type(result))
 
-        if not isinstance(message, str):
-            raise TypeError("Invalid message provided. Expected string, received '%s'." % message)
+        if not isinstance(message, (str, unicode)):
+            raise TypeError("Invalid message provided. Expected string, received '%s'." % type(message))
 
         if message == "":
             raise ValueError("Empty message provided. Requires failure message.")
