@@ -112,6 +112,17 @@ completed, so this will not work:
 
 Instead, these questions should be split into two separate `prompt` tasks.
 
+## Frequently Asked Questions
+
+### Why not just use Ansible debug and/or prompt_vars?
+
+While Ansible does provide some basic messaging and reporting functionality, the built in `debug` and `prompt_vars`
+methods have some drawbacks.  Specifically:
+
+* `debug` is intended only for debugging, and thus does not present output in a presentation-formatted manner
+* `prompt_vars` can only be used at the beginning of the script, limiting options for users that wish to wish to gather input during task playback
+* `prompt_vars` has limited, if any, support for conditional logic
+
 ## Contributing
 
 There are many ways to contribute to this project!  If you have an idea, or have discovered a bug, please
