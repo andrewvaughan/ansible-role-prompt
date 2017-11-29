@@ -23,6 +23,7 @@ Test suite for the Ansible prompt action plugin.
 """
 
 import ansible
+import mock
 import StringIO
 import sys
 import unittest
@@ -578,6 +579,7 @@ class TestSay(unittest.TestCase):
 
         self.assertEquals(self.outstr.getvalue(), "%s\n" % ("\n".join([str(m['say']) for m in msg])))
 
+
     def test_prompt_msg_saynewline_succeeds(self):
         """
         Test that the _prompt() method is successful if given a string that has no trailing newline.
@@ -620,6 +622,91 @@ class TestSay(unittest.TestCase):
         )
 
         self.assertEquals(self.outstr.getvalue(), "Hello World, How are we?\n")
+
+
+    def test_prompt_msg_align_invalid_fails(self):
+        """
+        Test that the _prompt() method is fails if given an invalid align option.
+
+        .. versionadded:: 0.3.0
+        .. function:: test_prompt_msg_align_invalid_fails()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "Align 'foobar' invalid.  Expected 'left', 'center', or 'right'."
+
+        self.assertEquals(
+            self.prompt._prompt(self.response, {
+                "say": "Hello World",
+                "align": "foobar"
+            }),
+            self.expected
+        )
+
+
+    def test_prompt_param_align_left_valid(self):
+        """
+        Test that the param() method is successful with a left alignment.
+
+        .. versionadded:: 0.3.0
+        .. function:: test_prompt_param_align_left_valid()
+        """
+        with mock.patch('subprocess.check_output', return_value='10 50'):
+            msg = [
+                {"say": "Hello World", "align": "left"},
+            ]
+
+            self.assertTrue(isinstance(msg, list))
+
+            self.assertEquals(
+                self.prompt._prompt(self.response, msg),
+                self.expected
+            )
+
+            self.assertEquals(self.outstr.getvalue(), "Hello World\n")
+
+
+    def test_prompt_param_align_center_valid(self):
+        """
+        Test that the param() method is successful with a center alignment.
+
+        .. versionadded:: 0.3.0
+        .. function:: test_prompt_param_align_center_valid()
+        """
+        with mock.patch('subprocess.check_output', return_value='10 75'):
+            msg = [
+                {"say": "Hello World", "align": "center"},
+            ]
+
+            self.assertTrue(isinstance(msg, list))
+
+            self.assertEquals(
+                self.prompt._prompt(self.response, msg),
+                self.expected
+            )
+
+            self.assertEquals(self.outstr.getvalue(), "%s%s" % ("Hello World".center(74), "\n"))
+
+
+    def test_prompt_param_align_right_valid(self):
+        """
+        Test that the param() method is successful with a right alignment.
+
+        .. versionadded:: 0.3.0
+        .. function:: test_prompt_param_align_right_valid()
+        """
+        with mock.patch('subprocess.check_output', return_value='10 88'):
+            msg = [
+                {"say": "Hello World", "align": "right"},
+            ]
+
+            self.assertTrue(isinstance(msg, list))
+
+            self.assertEquals(
+                self.prompt._prompt(self.response, msg),
+                self.expected
+            )
+
+            self.assertEquals(self.outstr.getvalue(), "%s%s" % ("Hello World".rjust(87), "\n"))
 
 
 
@@ -765,3 +852,103 @@ class TestSay(unittest.TestCase):
             self.outstr.getvalue(),
             "Hello World\n"
         )
+
+
+    def test_prompt_run_align_left_valid(self):
+        """
+        Test that the run() method is successful with a left alignment.
+
+        .. versionadded:: 0.3.0
+        .. function:: test_prompt_run_align_left_valid()
+        """
+        del(self.expected['changed'])
+
+        prompt = self._getPrompt()
+
+        prompt.setOutput(self.outstr)
+        prompt._task.args = {
+            "msg": [
+                {
+                    "say": "Hello World",
+                    "align": "left",
+                }
+            ]
+        }
+
+        self.assertEquals(
+            prompt.run(),
+            self.expected
+        )
+
+        self.assertEquals(
+            self.outstr.getvalue(),
+            "Hello World\n"
+        )
+
+
+    def test_prompt_run_align_center_valid(self):
+        """
+        Test that the run() method is successful with a center alignment.
+
+        .. versionadded:: 0.3.0
+        .. function:: test_prompt_run_align_center_valid()
+        """
+        with mock.patch('subprocess.check_output', return_value='10 88'):
+            del(self.expected['changed'])
+
+            prompt = self._getPrompt()
+
+            prompt.setOutput(self.outstr)
+            prompt._task.args = {
+                "msg": [
+                    {
+                        "say": "Hello World",
+                        "align": "center",
+                        "newline": False,
+                    }
+                ]
+            }
+
+            self.assertEquals(
+                prompt.run(),
+                self.expected
+            )
+
+            self.assertEquals(
+                self.outstr.getvalue(),
+                "Hello World".center(88)
+            )
+
+
+    def test_prompt_run_align_right_valid(self):
+        """
+        Test that the run() method is successful with a right alignment.
+
+        .. versionadded:: 0.3.0
+        .. function:: test_prompt_run_align_right_valid()
+        """
+        with mock.patch('subprocess.check_output', return_value='10 52'):
+            del(self.expected['changed'])
+
+            prompt = self._getPrompt()
+
+            prompt.setOutput(self.outstr)
+            prompt._task.args = {
+                "msg": [
+                    {
+                        "say": "Hello World",
+                        "align": "right",
+                        "newline": False,
+                    }
+                ]
+            }
+
+            self.assertEquals(
+                prompt.run(),
+                self.expected
+            )
+
+            self.assertEquals(
+                self.outstr.getvalue(),
+                "Hello World".rjust(52)
+            )

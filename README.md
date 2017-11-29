@@ -59,7 +59,26 @@ Examples tasks are as follows:
       - Hello Universe
 ```
 
+### Alignment
+
+> The `align` option does **not** work in tandem with the `ask` option
+
+Messages can be aligned when presented to either `left` (default), `center`, or `right` justification:
+
+```yaml
+- name: Alignment Messages
+    msg:
+      - say: Left Alignment
+        align: left
+      - say: Center Alignment
+        align: center
+      - say: Right Alignment
+        align: right
+```
+
 ### Preventing Trailing Newline
+
+> The `newline` option does **not** work in tandem with the `ask` option
 
 In order to prevent the Ansible Prompt module from automatically adding a newline to the end of a message, simply
 set the optional `newline` value to `false`:
