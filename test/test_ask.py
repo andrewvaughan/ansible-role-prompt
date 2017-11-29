@@ -369,3 +369,134 @@ class TestAsk(unittest.TestCase):
             }),
             self.expected
         )
+
+
+    def test_prompt_msg_noask_default_fails(self):
+        """
+        Test that the _prompt() method fails if 'default' is provided without 'ask'
+
+        .. versionadded:: 1.0.0
+        .. function:: test_prompt_msg_noask_default_fails()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "Unexpected 'default' in non-question prompt."
+
+        self.assertEquals(
+            self.prompt._prompt(self.response, {
+                "say": "Hello World",
+                "default": "foobar"
+            }),
+            self.expected
+        )
+
+
+    def test_prompt_msg_noask_postfix_fails(self):
+        """
+        Test that the _prompt() method fails if 'postfix' is provided without 'ask'
+
+        .. versionadded:: 1.0.0
+        .. function:: test_prompt_msg_noask_postfix_fails()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "Unexpected 'postfix' in non-question prompt."
+
+        self.assertEquals(
+            self.prompt._prompt(self.response, {
+                "say": "Hello World",
+                "postfix": "foobar"
+            }),
+            self.expected
+        )
+
+
+    def test_prompt_msg_ask_repeats(self):
+        """
+        Test that the _prompt() method repeats an ask if given a blank response with no default.
+
+        .. versionadded:: 1.0.0
+        .. function:: test_prompt_msg_noask_postfix_fails()
+        """
+        global counter
+        counter = 0
+
+        def return_helper(*args, **kwargs):
+            """
+            Returns a different value the second time called.
+            """
+            global counter
+
+            counter = counter + 1
+            if counter > 1:
+                return "foobar"
+
+            return ""
+
+        with mock.patch('__builtin__.raw_input', side_effect=return_helper) as mockinput:
+            result = self.prompt._prompt({}, {
+                'ask': 'varname'
+            })
+
+            self.assertEqual(mockinput.call_count, 2)
+            self.assertEquals(result['ansible_facts']['varname'], 'foobar')
+
+
+    def test_prompt_msg_shows_default(self):
+        """
+        Test that the _prompt() method shows the default in the prompt, if provided.
+
+        .. versionadded:: 1.0.0
+        .. function:: test_prompt_msg_shows_default()
+        """
+        with mock.patch('__builtin__.raw_input', return_value="Andrew") as mockinput:
+            result = self.prompt._prompt(self.response, {
+                "say": "First Name",
+                "ask": "first_name",
+                "default": "foobar"
+            })
+
+            args, kwargs = mockinput.call_args
+
+            self.assertEquals("First Name [foobar]: ", args[0])
+            self.assertEquals(result['ansible_facts']['first_name'], 'Andrew')
+
+
+
+    def test_prompt_msg_defaults(self):
+        """
+        Test that the _prompt() method sets the fact to the default if provided and no input is given.
+
+        .. versionadded:: 1.0.0
+        .. function:: test_prompt_msg_defaults()
+        """
+        with mock.patch('__builtin__.raw_input', return_value="") as mockinput:
+            result = self.prompt._prompt(self.response, {
+                "say": "First Name",
+                "ask": "first_name",
+                "default": "foobar"
+            })
+
+            args, kwargs = mockinput.call_args
+
+            self.assertEquals("First Name [foobar]: ", args[0])
+            self.assertEquals(result['ansible_facts']['first_name'], 'foobar')
+
+
+    def test_prompt_msg_postfix_custom(self):
+        """
+        Test that the _prompt() method uses the provided postfix in the prompt.
+
+        .. versionadded:: 1.0.0
+        .. function:: test_prompt_msg_defaults()
+        """
+        with mock.patch('__builtin__.raw_input', return_value="") as mockinput:
+            result = self.prompt._prompt(self.response, {
+                "say": "First Name",
+                "ask": "first_name",
+                "default": "foobar",
+                "postfix": "!?!?"
+            })
+
+            args, kwargs = mockinput.call_args
+
+            self.assertEquals("First Name [foobar]!?!? ", args[0])
+            self.assertEquals(result['ansible_facts']['first_name'], 'foobar')

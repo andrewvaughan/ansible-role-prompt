@@ -42,10 +42,13 @@ class ActionModule(ActionBase):
 
     .. versionchanged:: 0.3.0
        Added newline, alignment, and formatting functionality.
+
+    .. versionchanged:: 1.0.0
+       Added field postfix, choices, and defaults.
     """
 
     TRANSFERS_FILES = False
-    VALID_PARAMS = ['say', 'ask', 'newline', 'align']
+    VALID_PARAMS = ['say', 'ask', 'postfix', 'newline', 'align', 'default']
 
 
     def __init__(self, task, connection, play_context, loader, templar, shared_loader_obj):
@@ -145,6 +148,9 @@ class ActionModule(ActionBase):
         .. versionchanged:: 0.3.0
            Added newline, alignment, and formatting functionality.
 
+        .. versionchanged:: 1.0.0
+           Added postfix option, choices, and defaults.
+
         .. function:: _prompt(result, msg)
         """
         if not isinstance(msg, list):
@@ -196,18 +202,43 @@ class ActionModule(ActionBase):
                 if 'align' in m and m['align'] != 'left':
                     return self._fail(result, "Option 'align' is not compatible with option 'ask'.")
 
+                # If no say is provided, just make it blank
+                if 'say' not in m:
+                    m['say'] = ""
+
+                # Default to input postfix, if not set
+                if 'postfix' not in m:
+                    m['postfix'] = ":"
+
                 # Convert to terminal input temporarily
                 oldin = sys.stdin
 
-                if isinstance(self._instr, str):
-                    sys.stdin = open(self._instr)
-                else:
-                    sys.stdin = self._instr
+                # Repeat question until answered
+                while True:
+                    if isinstance(self._instr, str):
+                        sys.stdin = open(self._instr)
+                    else:
+                        sys.stdin = self._instr
 
-                # Present empty string is "say" not provided
-                askstr = ("%s " % m['say']) if 'say' in m else ''
+                    defaultString = ""
+                    if 'default' in m:
+                        defaultString = " [%s]" % m['default']
 
-                var = raw_input(askstr)
+                    # Present empty string if "say" not provided
+                    askstr = "%s%s%s " % (
+                        m['say'],
+                        defaultString,
+                        m['postfix']
+                    )
+
+                    var = raw_input(askstr)
+
+                    if var != "":
+                        break
+
+                    if 'default' in m:
+                        var = m['default']
+                        break
 
                 # Revert to previous setting
                 sys.stdin = oldin
@@ -220,6 +251,12 @@ class ActionModule(ActionBase):
             # If it's just a message, print it
             elif 'say' in m:
                 import subprocess
+
+                if 'default' in m:
+                    return self._fail(result, "Unexpected 'default' in non-question prompt.")
+
+                if 'postfix' in m:
+                    return self._fail(result, "Unexpected 'postfix' in non-question prompt.")
 
                 if 'align' not in m:
                     m['align'] = 'left'
