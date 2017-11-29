@@ -43,7 +43,7 @@ galaxy_info:
       versions:
       - all
 
-  categories:
+  galaxy_tags:
     - development
     - messaging
     - prompt
