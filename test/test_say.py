@@ -97,7 +97,7 @@ class TestSay(unittest.TestCase):
 
     # setOutput(outstr)
 
-    def test_setOutput_default_valid(self):
+    def test_prompt_setOutput_default_valid(self):
         """
         Test that the default setting for a prompt is stdout.
 
@@ -113,7 +113,7 @@ class TestSay(unittest.TestCase):
         )
 
 
-    def test_setOutput_stringio_valid(self):
+    def test_prompt_setOutput_stringio_valid(self):
         """
         Test that an updated setting for setOutput() sticks.
 
@@ -137,7 +137,7 @@ class TestSay(unittest.TestCase):
 
     # _fail(result, msg, args*)
 
-    def test_fail_params_missing_exception(self):
+    def test_prompt_fail_params_missing_exception(self):
         """
         Test that the _fail() method throws an exception if all parameters are missing.
 
@@ -148,7 +148,7 @@ class TestSay(unittest.TestCase):
             self.prompt._fail()
 
 
-    def test_fail_response_missing_exception(self):
+    def test_prompt_fail_response_missing_exception(self):
         """
         Test that the _fail() method throws an exception if the response is missing.
 
@@ -159,7 +159,7 @@ class TestSay(unittest.TestCase):
             self.prompt._fail(None, "Failure Message")
 
 
-    def test_fail_response_invalid_exception(self):
+    def test_prompt_fail_response_invalid_exception(self):
         """
         Test that the _fail() method throws an exception if the response is not a dict.
 
@@ -170,7 +170,7 @@ class TestSay(unittest.TestCase):
             self.prompt._fail("Bad Result", "Failure Message")
 
 
-    def test_fail_message_missing_exception(self):
+    def test_prompt_fail_message_missing_exception(self):
         """
         Test that the _fail() method throws an exception if no message is provided.
 
@@ -181,7 +181,7 @@ class TestSay(unittest.TestCase):
             self.prompt._fail(self.response)
 
 
-    def test_fail_message_empty_exception(self):
+    def test_prompt_fail_message_empty_exception(self):
         """
         Test that the _fail() method throws an exception if an empty message is provided.
 
@@ -192,7 +192,7 @@ class TestSay(unittest.TestCase):
             self.prompt._fail(self.response, "")
 
 
-    def test_fail_message_nonstring_exception(self):
+    def test_prompt_fail_message_nonstring_exception(self):
         """
         Test that the _fail() method throws an exception if a non-string message is provided.
 
@@ -205,7 +205,7 @@ class TestSay(unittest.TestCase):
             self.prompt._fail(self.response, ["a", "b"])
 
 
-    def test_fail_message_valid_success(self):
+    def test_prompt_fail_message_valid_success(self):
         """
         Tests that the _fail() method returns an expected response.
 
@@ -221,7 +221,7 @@ class TestSay(unittest.TestCase):
         )
 
 
-    def test_fail_message_valid_success(self):
+    def test_prompt_fail_message_valid_success(self):
         """
         Test that the _fail() method returns an expected response with multiple variables.
 
@@ -578,12 +578,55 @@ class TestSay(unittest.TestCase):
 
         self.assertEquals(self.outstr.getvalue(), "%s\n" % ("\n".join([str(m['say']) for m in msg])))
 
+    def test_prompt_msg_saynewline_succeeds(self):
+        """
+        Test that the _prompt() method is successful if given a string that has no trailing newline.
+
+        .. versionadded:: 0.3.0
+        .. function:: test_prompt_msg_saynewline_succeeds()
+        """
+        msg = [
+            {"say": "Hello World", "newline": False},
+        ]
+
+        self.assertTrue(isinstance(msg, list))
+
+        self.assertEquals(
+            self.prompt._prompt(self.response, msg),
+            self.expected
+        )
+
+        self.assertEquals(self.outstr.getvalue(), "Hello World")
+
+
+    def test_prompt_msg_saynewlinemultiple_succeeds(self):
+        """
+        Test that the _prompt() method is successful if given multiple strings that have no trailing newline.
+
+        .. versionadded:: 0.3.0
+        .. function:: test_prompt_msg_saynewlinemultiple_succeeds()
+        """
+        msg = [
+            {"say": "Hello ", "newline": False},
+            {"say": "World", "newline": False},
+            {"say": ", How are we?", "newline": True},
+        ]
+
+        self.assertTrue(isinstance(msg, list))
+
+        self.assertEquals(
+            self.prompt._prompt(self.response, msg),
+            self.expected
+        )
+
+        self.assertEquals(self.outstr.getvalue(), "Hello World, How are we?\n")
+
 
 
 
     # run(tmp=None, task_vars=None)
 
-    def test_run_msg_missing_fails(self):
+    def test_prompt_run_msg_missing_fails(self):
         """
         Test that the run() method will fail if missing the msg parameter.
 
@@ -605,7 +648,7 @@ class TestSay(unittest.TestCase):
         )
 
 
-    def test_run_multiple_params_fails(self):
+    def test_prompt_run_multiple_params_fails(self):
         """
         Test that the run() method will fail if there are too many parameters.
 
@@ -631,9 +674,9 @@ class TestSay(unittest.TestCase):
         )
 
 
-    def test_run_singlemessage_valid(self):
+    def test_prompt_run_singlemessage_valid(self):
         """
-        Test that the run() method will fail if there are too many parameters.
+        Test that the run() method will succeed with a single message.
 
         .. versionadded:: 0.1.0
         .. function:: test_run_singlemessage_valid()
@@ -658,9 +701,9 @@ class TestSay(unittest.TestCase):
         )
 
 
-    def test_run_multimessage_valid(self):
+    def test_prompt_run_multimessage_valid(self):
         """
-        Test that the run() method will fail if there are too many parameters.
+        Test that the run() method will succeed with a multiple messages.
 
         .. versionadded:: 0.1.0
         .. function:: test_run_multimessage_valid()
@@ -685,4 +728,40 @@ class TestSay(unittest.TestCase):
         self.assertEquals(
             self.outstr.getvalue(),
             "Hello World\nHi there\n"
+        )
+
+
+    def test_prompt_run_saynewlinemultiple_valid(self):
+        """
+        Test that the run() method will succeed with a multiple messages.
+
+        .. versionadded:: 0.3.0
+        .. function:: test_prompt_run_saynewlinemultiple_valid()
+        """
+        del(self.expected['changed'])
+
+        prompt = self._getPrompt()
+
+        prompt.setOutput(self.outstr)
+        prompt._task.args = {
+            "msg": [
+                {
+                    "say": "Hello ",
+                    "newline": False,
+                },
+                {
+                    "say": "World",
+                    "newline": True,
+                }
+            ]
+        }
+
+        self.assertEquals(
+            prompt.run(),
+            self.expected
+        )
+
+        self.assertEquals(
+            self.outstr.getvalue(),
+            "Hello World\n"
         )

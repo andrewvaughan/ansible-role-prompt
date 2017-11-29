@@ -42,7 +42,7 @@ class ActionModule(ActionBase):
     """
 
     TRANSFERS_FILES = False
-    VALID_PARAMS = ['say', 'ask']
+    VALID_PARAMS = ['say', 'ask', 'newline']
 
 
     def __init__(self, task, connection, play_context, loader, templar, shared_loader_obj):
@@ -167,6 +167,11 @@ class ActionModule(ActionBase):
                 if arg not in self.VALID_PARAMS:
                     return self._fail(result, "Unexpected parameter '%s'" % arg)
 
+            # Determine postfix given newline settings
+            postfix = "\n"
+            if 'newline' in m and not m['newline']:
+                postfix = ""
+
             # If this is a prompt, ask it as such
             if 'ask' in m:
 
@@ -201,7 +206,7 @@ class ActionModule(ActionBase):
 
             # If it's just a message, print it
             elif 'say' in m:
-                self._outstr.write("%s\n" % m['say'])
+                self._outstr.write("%s%s" % (m['say'], postfix))
 
 
         return result
