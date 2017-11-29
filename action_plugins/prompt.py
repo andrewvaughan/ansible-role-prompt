@@ -39,10 +39,13 @@ class ActionModule(ActionBase):
 
     .. versionchanged:: 0.2.0
        Added user input prompting functionality.
+
+    .. versionchanged:: 0.3.0
+       Added newline, alignment, and formatting functionality.
     """
 
     TRANSFERS_FILES = False
-    VALID_PARAMS = ['say', 'ask', 'newline']
+    VALID_PARAMS = ['say', 'ask', 'newline', 'align']
 
 
     def __init__(self, task, connection, play_context, loader, templar, shared_loader_obj):
@@ -139,6 +142,9 @@ class ActionModule(ActionBase):
         .. versionchanged:: 0.2.0
            Added user input prompting functionality.
 
+        .. versionchanged:: 0.3.0
+           Added newline, alignment, and formatting functionality.
+
         .. function:: _prompt(result, msg)
         """
         if not isinstance(msg, list):
@@ -183,6 +189,13 @@ class ActionModule(ActionBase):
                 if not self.rValidVariable.search(m['ask']):
                     return self._fail(result, "Invalid character in 'ask' parameter '%s'.", m['ask'])
 
+                # Check if any invalid parameters are provided
+                if 'newline' in m and not m['newline']:
+                    return self._fail(result, "Option 'newline' is not compatible with option 'ask'.")
+
+                if 'align' in m and m['align'] != 'left':
+                    return self._fail(result, "Option 'align' is not compatible with option 'ask'.")
+
                 # Convert to terminal input temporarily
                 oldin = sys.stdin
 
@@ -206,8 +219,29 @@ class ActionModule(ActionBase):
 
             # If it's just a message, print it
             elif 'say' in m:
-                self._outstr.write("%s%s" % (m['say'], postfix))
+                import subprocess
 
+                if 'align' not in m:
+                    m['align'] = 'left'
+
+                output = m['say']
+
+                if m['align'] == 'center':
+                    rows, columns = subprocess.check_output(['stty', 'size']).decode().split()
+                    output = "%s%s" % (output.center(int(columns) - len(postfix)), postfix)
+                elif m['align'] == 'right':
+                    rows, columns = subprocess.check_output(['stty', 'size']).decode().split()
+                    output = "%s%s" % (output.rjust(int(columns) - len(postfix)), postfix)
+                elif m['align'] == 'left':
+                    output = "%s%s" % (output, postfix)
+                else:
+                    return self._fail(
+                        result,
+                        "Align '%s' invalid.  Expected 'left', 'center', or 'right'.",
+                        m['align']
+                    )
+
+                self._outstr.write(output)
 
         return result
 

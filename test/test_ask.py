@@ -331,3 +331,41 @@ class TestAsk(unittest.TestCase):
             })
 
             self.assertEquals(result['ansible_facts']['varname'], 'mocked input')
+
+
+    def test_prompt_msg_newline_withask_fails(self):
+        """
+        Test that the _prompt() method fails if both `ask` and `newline` are set.
+
+        .. versionadded:: 0.3.0
+        .. function:: test_prompt_msg_newline_withask_fails()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "Option 'newline' is not compatible with option 'ask'."
+
+        self.assertEquals(
+            self.prompt._prompt(self.response, {
+                "ask": "test_var",
+                "newline": False
+            }),
+            self.expected
+        )
+
+
+    def test_prompt_msg_align_withask_fails(self):
+        """
+        Test that the _prompt() method fails if both `ask` and `align` are set.
+
+        .. versionadded:: 0.3.0
+        .. function:: test_prompt_msg_align_withask_fails()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "Option 'align' is not compatible with option 'ask'."
+
+        self.assertEquals(
+            self.prompt._prompt(self.response, {
+                "ask": "test_var",
+                "align": "center"
+            }),
+            self.expected
+        )
