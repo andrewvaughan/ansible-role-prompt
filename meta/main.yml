@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: Andrew Vaughan
-  description: Ansible role that provides functionality for messaging prompting users during tasks.
+  description: Ansible role that provides functionality for messaging and prompting users for input during tasks.
   license: MIT
 
   github_branch: release
