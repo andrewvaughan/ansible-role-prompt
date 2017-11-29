@@ -59,6 +59,23 @@ Examples tasks are as follows:
       - Hello Universe
 ```
 
+### Preventing Trailing Newline
+
+In order to prevent the Ansible Prompt module from automatically adding a newline to the end of a message, simply
+set the optional `newline` value to `false`:
+
+```yaml
+# Outputs "Start of line...middle of line...end of line" followed by newline
+- name: No Newline Message
+  prompt:
+    msg:
+      - say: "Start of line..."
+        newline: false
+      - say: "middle of line"
+        newline: false
+      - say: "...end of line"
+```
+
 ### Gathering Facts From User Input
 
 The strength of the prompt plugin comes from its ability to gather Ansible facts, as a task, during the run of a
@@ -97,8 +114,8 @@ You may optionally ask multiple questions in the same prompt:
         ask: zipcode
 ```
 
-All variables will be created upon the task's completion.  Note that variables *cannot* be used until the task is
-completed, so this will not work:
+At this time, all variables are created upon the task completion.  Note that variables *cannot* be used until the task
+is completed, so this will not work:
 
 ```yaml
 - name: Address Information

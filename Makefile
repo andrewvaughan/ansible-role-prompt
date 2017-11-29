@@ -16,6 +16,7 @@ test: clean dev-dependencies lint
 coverage: clean dev-dependencies lint
 	coverage run --source action_plugins test
 	coverage html
+	coverage report
 
 docs: clean dev-dependencies
 	pydoc -w action_plugins
@@ -28,9 +29,8 @@ changelog:
 	$(info )
 	@git log $(TAG1)$(TAG2) --no-merges --reverse --pretty=format:'- [view](https://github.com/andrewvaughan/ansible-prompt/commit/%H) &bull; %s'
 
-
 clean:
-	rm -rf htmlcov
+	rm -rf .coverage htmlcov
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*~' -exec rm -f  {} +

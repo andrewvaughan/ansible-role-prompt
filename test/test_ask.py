@@ -98,7 +98,7 @@ class TestAsk(unittest.TestCase):
 
     # setIntput(instr)
 
-    def test_setInput_default_valid(self):
+    def test_prompt_setInput_default_valid(self):
         """
         Test that the default setting for a prompt is '/dev/tty'.
 
@@ -121,7 +121,7 @@ class TestAsk(unittest.TestCase):
             self.assertEquals(result['ansible_facts']['varname'], 'mocked input')
 
 
-    def test_setInput_stringio_valid(self):
+    def test_prompt_setInput_stringio_valid(self):
         """
         Test that an updated setting for setInput() sticks.
 
