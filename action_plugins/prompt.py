@@ -48,7 +48,7 @@ class ActionModule(ActionBase):
     """
 
     TRANSFERS_FILES = False
-    VALID_PARAMS = ['say', 'ask', 'postfix', 'newline', 'align', 'default']
+    VALID_PARAMS = ['say', 'ask', 'postfix', 'newline', 'align', 'default', 'trim']
 
 
     def __init__(self, task, connection, play_context, loader, templar, shared_loader_obj):
@@ -206,6 +206,10 @@ class ActionModule(ActionBase):
                 if 'say' not in m:
                     m['say'] = ""
 
+                # If no trim, default to true
+                if 'trim' not in m:
+                    m['trim'] = True
+
                 # Default to input postfix, if not set
                 if 'postfix' not in m:
                     m['postfix'] = ":"
@@ -246,6 +250,10 @@ class ActionModule(ActionBase):
                 if 'ansible_facts' not in result:
                     result['ansible_facts'] = dict()
 
+                # Trim whitespace if set
+                if m['trim']:
+                    var = var.strip()
+
                 result['ansible_facts'][m['ask']] = var
 
             # If it's just a message, print it
@@ -257,6 +265,9 @@ class ActionModule(ActionBase):
 
                 if 'postfix' in m:
                     return self._fail(result, "Unexpected 'postfix' in non-question prompt.")
+
+                if 'trim' in m:
+                    return self._fail(result, "Unexpected 'trim' in non-question prompt.")
 
                 if 'align' not in m:
                     m['align'] = 'left'

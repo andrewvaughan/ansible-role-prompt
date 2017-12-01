@@ -409,6 +409,25 @@ class TestAsk(unittest.TestCase):
         )
 
 
+    def test_prompt_msg_noask_trim_fails(self):
+        """
+        Test that the _prompt() method fails if 'trim' is provided without 'ask'
+
+        .. versionadded:: 1.0.0
+        .. function:: test_prompt_msg_noask_trim_fails()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "Unexpected 'trim' in non-question prompt."
+
+        self.assertEquals(
+            self.prompt._prompt(self.response, {
+                "say": "Hello World",
+                "trim": False
+            }),
+            self.expected
+        )
+
+
     def test_prompt_msg_ask_repeats(self):
         """
         Test that the _prompt() method repeats an ask if given a blank response with no default.
@@ -486,7 +505,7 @@ class TestAsk(unittest.TestCase):
         Test that the _prompt() method uses the provided postfix in the prompt.
 
         .. versionadded:: 1.0.0
-        .. function:: test_prompt_msg_defaults()
+        .. function:: test_prompt_msg_postfix_custom()
         """
         with mock.patch('__builtin__.raw_input', return_value="") as mockinput:
             result = self.prompt._prompt(self.response, {
@@ -500,3 +519,36 @@ class TestAsk(unittest.TestCase):
 
             self.assertEquals("First Name [foobar]!?!? ", args[0])
             self.assertEquals(result['ansible_facts']['first_name'], 'foobar')
+
+
+    def test_prompt_msg_trim_default(self):
+        """
+        Test that the _prompt() method will trim responses by default
+
+        .. versionadded:: 1.0.0
+        .. function:: test_prompt_msg_trim_default()
+        """
+        with mock.patch('__builtin__.raw_input', return_value="  trim  value  ") as mockinput:
+            result = self.prompt._prompt(self.response, {
+                "say": "First Name",
+                "ask": "first_name",
+            })
+
+            self.assertEquals(result['ansible_facts']['first_name'], 'trim  value')
+
+
+    def test_prompt_msg_trim_off_valid(self):
+        """
+        Test that the _prompt() method will not trim responses if set to False.
+
+        .. versionadded:: 1.0.0
+        .. function:: test_prompt_msg_trim_off_valid()
+        """
+        with mock.patch('__builtin__.raw_input', return_value="  trim  value  ") as mockinput:
+            result = self.prompt._prompt(self.response, {
+                "say": "First Name",
+                "ask": "first_name",
+                "trim": False
+            })
+
+            self.assertEquals(result['ansible_facts']['first_name'], '  trim  value  ')
