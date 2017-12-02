@@ -77,7 +77,7 @@ the main repository are meant for production purposes only.
 In order to keep your code up to date with master, you need to add the project's main repository as your upstream:
 
 ```bash
-git remote add upstream https://github.com/andrewvaughan/ansible-prompt module
+git remote add upstream https://github.com/andrewvaughan/ansible-role-prompt module
 ```
 
 **5. Ensure that your master branch is up to date with the upstream**
@@ -177,11 +177,11 @@ such, you may be requested to pull an updated set of code style guidelines due t
 submitted code, and to resubmit your request according to the new guidelines.
 
 
-[project-url]:    https://github.com/andrewvaughan/ansible-prompt
-[license-url]:    https://github.com/andrewvaughan/ansible-prompt/blob/master/LICENSE
-[issues-url]:     https://github.com/andrewvaughan/ansible-prompt/issues
-[milestones-url]: https://github.com/andrewvaughan/ansible-prompt/milestones
-[pulls-url]:      https://github.com/andrewvaughan/ansible-prompt/pulls
+[project-url]:    https://github.com/andrewvaughan/ansible-role-prompt
+[license-url]:    https://github.com/andrewvaughan/ansible-role-prompt/blob/master/LICENSE
+[issues-url]:     https://github.com/andrewvaughan/ansible-role-prompt/issues
+[milestones-url]: https://github.com/andrewvaughan/ansible-role-prompt/milestones
+[pulls-url]:      https://github.com/andrewvaughan/ansible-role-prompt/pulls
 
 [squash-support]: http://gitready.com/advanced/2009/02/10/squashing-commits-with-rebase.html
 [pull-support]:   https://help.github.com/articles/creating-a-pull-request

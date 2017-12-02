@@ -27,7 +27,7 @@ changelog:
 
 	$(info Changelog for $(TAG1)$(TAG2):)
 	$(info )
-	@git log $(TAG1)$(TAG2) --no-merges --reverse --pretty=format:'- [view](https://github.com/andrewvaughan/ansible-prompt/commit/%H) &bull; %s'
+	@git log $(TAG1)$(TAG2) --no-merges --reverse --pretty=format:'- [view](https://github.com/andrewvaughan/ansible-role-prompt/commit/%H) &bull; %s'
 
 clean:
 	rm -rf .coverage htmlcov
