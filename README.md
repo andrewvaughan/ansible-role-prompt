@@ -16,14 +16,14 @@ This plugin is made available in [Ansible Galaxy](https://galaxy.ansible.com/). 
 may install this plugin with the following command:
 
 ```bash
-ansible-galaxy install andrewvaughan.ansible-prompt
+ansible-galaxy install andrewvaughan.prompt
 ```
 
 To use this plugin, simply add the role to your playbook file with the following addition:
 
 ```yml
 roles:
-- andrewvaughan.ansible-prompt
+- andrewvaughan.prompt
 ```
 
 Once completed, you may use the entire plugin as described in the [Usage Guidelines](#usage)
@@ -212,16 +212,16 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 
 [version-image]:     http://img.shields.io/badge/release-0.3.0-blue.svg?style=flat
 [license-image]:     http://img.shields.io/badge/license-MIT-blue.svg?style=flat
-[build-image]:       https://travis-ci.org/andrewvaughan/ansible-prompt.svg?branch=master
-[coverage-image]:    https://coveralls.io/repos/github/andrewvaughan/ansible-prompt/badge.svg?branch=master
+[build-image]:       https://travis-ci.org/andrewvaughan/ansible-role-prompt.svg?branch=master
+[coverage-image]:    https://coveralls.io/repos/github/andrewvaughan/ansible-role-prompt/badge.svg?branch=master
 
-[github-contribute]: https://github.com/andrewvaughan/ansible-prompt/blob/master/.github/CONTRIBUTING.md
-[github-issue]:      https://github.com/andrewvaughan/ansible-prompt/issues
-[github-license]:    https://github.com/andrewvaughan/ansible-prompt/blob/master/LICENSE
-[github-release]:    https://github.com/andrewvaughan/ansible-prompt/releases
+[github-contribute]: https://github.com/andrewvaughan/ansible-role-prompt/blob/master/.github/CONTRIBUTING.md
+[github-issue]:      https://github.com/andrewvaughan/ansible-role-prompt/issues
+[github-license]:    https://github.com/andrewvaughan/ansible-role-prompt/blob/master/LICENSE
+[github-release]:    https://github.com/andrewvaughan/ansible-role-prompt/releases
 
-[travis-detail]:     https://travis-ci.org/andrewvaughan/ansible-prompt
-[coveralls-detail]:  https://coveralls.io/github/andrewvaughan/ansible-prompt?branch=master
+[travis-detail]:     https://travis-ci.org/andrewvaughan/ansible-role-prompt
+[coveralls-detail]:  https://coveralls.io/github/andrewvaughan/ansible-role-prompt?branch=master
 
 [ansible]:           https://www.ansible.com/
 [ansible-debug]:     http://docs.ansible.com/ansible/latest/debug_module.html
