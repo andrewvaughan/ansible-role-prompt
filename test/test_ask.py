@@ -428,6 +428,46 @@ class TestAsk(unittest.TestCase):
         )
 
 
+    def test_prompt_msg_noask_confirm_fails(self):
+        """
+        Test that the _prompt() method fails if 'confirm' is provided without 'ask'
+
+        .. versionadded:: 1.0.0
+        .. function:: test_prompt_msg_noask_confirm_fails()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "Unexpected 'confirm' in non-question prompt."
+
+        self.assertEquals(
+            self.prompt._prompt(self.response, {
+                "say": "Hello World",
+                "confirm": True
+            }),
+            self.expected
+        )
+
+
+    def test_prompt_msg_confirm_defaults_fails(self):
+        """
+        Test that the _prompt() method fails if given both default and confirm.
+
+        .. versionadded:: 1.0.0
+        .. function:: test_prompt_msg_confirm_defaults_fails()
+        """
+        self.expected['failed'] = True
+        self.expected['msg'] = "Unexpected 'default' provided with confirmation question."
+
+        self.assertEquals(
+            self.prompt._prompt(self.response, {
+                "say": "Continue",
+                "ask": "result",
+                "confirm": True,
+                "default": "some other thing"
+            }),
+            self.expected
+        )
+
+
     def test_prompt_msg_ask_repeats(self):
         """
         Test that the _prompt() method repeats an ask if given a blank response with no default.
@@ -475,7 +515,7 @@ class TestAsk(unittest.TestCase):
 
             args, kwargs = mockinput.call_args
 
-            self.assertEquals("First Name [foobar]: ", args[0])
+            self.assertEquals("First Name [foobar]? ", args[0])
             self.assertEquals(result['ansible_facts']['first_name'], 'Andrew')
 
 
@@ -496,7 +536,7 @@ class TestAsk(unittest.TestCase):
 
             args, kwargs = mockinput.call_args
 
-            self.assertEquals("First Name [foobar]: ", args[0])
+            self.assertEquals("First Name [foobar]? ", args[0])
             self.assertEquals(result['ansible_facts']['first_name'], 'foobar')
 
 
@@ -552,3 +592,99 @@ class TestAsk(unittest.TestCase):
             })
 
             self.assertEquals(result['ansible_facts']['first_name'], '  trim  value  ')
+
+
+    def test_prompt_msg_confirm_invalid_repeats(self):
+        """
+        Test that the _prompt() method will repeat if given an invalid response with confirm.
+
+        .. versionadded:: 1.0.0
+        .. function:: test_prompt_msg_confirm_invalid_repeats()
+        """
+        global counter
+        counter = 0
+
+        def return_helper(*args, **kwargs):
+            """
+            Returns a different value the second time called.
+            """
+            global counter
+
+            counter = counter + 1
+            if counter > 1:
+                return "Y"
+
+            return "foobar"
+
+        with mock.patch('__builtin__.raw_input', side_effect=return_helper) as mockinput:
+            result = self.prompt._prompt(self.response, {
+                "say": "Continue",
+                "ask": "result",
+                "confirm": False
+            })
+
+            args, kwargs = mockinput.call_args
+
+            self.assertEquals("Continue [yN]? ", args[0])
+            self.assertEqual(mockinput.call_count, 2)
+            self.assertEquals(result['ansible_facts']['result'], True)
+
+
+    def test_prompt_msg_confirm_blank_default_yes(self):
+        """
+        Test that the _prompt() method will return appropriately with confirm as default.
+
+        .. versionadded:: 1.0.0
+        .. function:: test_prompt_msg_confirm_blank_default_yes()
+        """
+        with mock.patch('__builtin__.raw_input', return_value="") as mockinput:
+            result = self.prompt._prompt(self.response, {
+                "say": "Continue",
+                "ask": "result",
+                "confirm": True
+            })
+
+            args, kwargs = mockinput.call_args
+
+            self.assertEquals("Continue [Yn]? ", args[0])
+            self.assertEquals(result['ansible_facts']['result'], True)
+
+
+    def test_prompt_msg_confirm_blank_default_no(self):
+        """
+        Test that the _prompt() method will return appropriately with confirm as default.
+
+        .. versionadded:: 1.0.0
+        .. function:: test_prompt_msg_confirm_blank_default_no()
+        """
+        with mock.patch('__builtin__.raw_input', return_value="") as mockinput:
+            result = self.prompt._prompt(self.response, {
+                "say": "Continue",
+                "ask": "result",
+                "confirm": False
+            })
+
+            args, kwargs = mockinput.call_args
+
+            self.assertEquals("Continue [yN]? ", args[0])
+            self.assertEquals(result['ansible_facts']['result'], False)
+
+
+    def test_prompt_msg_confirm_capital_valid(self):
+        """
+        Test that the _prompt() method works with capital responses for confirms.
+
+        .. versionadded:: 1.0.0
+        .. function:: test_prompt_msg_confirm_capital_valid()
+        """
+        with mock.patch('__builtin__.raw_input', return_value="Y") as mockinput:
+            result = self.prompt._prompt(self.response, {
+                "say": "Continue",
+                "ask": "result",
+                "confirm": False
+            })
+
+            args, kwargs = mockinput.call_args
+
+            self.assertEquals("Continue [yN]? ", args[0])
+            self.assertEquals(result['ansible_facts']['result'], True)

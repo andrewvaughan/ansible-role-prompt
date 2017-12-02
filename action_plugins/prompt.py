@@ -44,11 +44,14 @@ class ActionModule(ActionBase):
        Added newline, alignment, and formatting functionality.
 
     .. versionchanged:: 1.0.0
-       Added field postfix, choices, and defaults.
+       Added field postfix, confirm, choices, and defaults.
     """
 
     TRANSFERS_FILES = False
-    VALID_PARAMS = ['say', 'ask', 'postfix', 'newline', 'align', 'default', 'trim']
+    VALID_PARAMS = [
+        'say', 'newline', 'align',
+        'ask', 'postfix', 'default', 'trim', 'confirm'
+    ]
 
 
     def __init__(self, task, connection, play_context, loader, templar, shared_loader_obj):
@@ -83,8 +86,7 @@ class ActionModule(ActionBase):
         .. versionadded:: 0.1.0
         .. function:: run([tmp=None, task_vars=None])
         """
-        if task_vars is None:
-            task_vars = dict()
+        task_vars = task_vars or dict()
 
         result = super(ActionModule, self).run(tmp, task_vars)
         args = self._task.args
@@ -108,11 +110,7 @@ class ActionModule(ActionBase):
         .. versionadded:: 0.1.0
         .. function:: setOutput([outstr=None])
         """
-        if outstr is None:
-            self._outstr = sys.stdout
-
-        else:
-            self._outstr = outstr
+        self._outstr = outstr or sys.stdout
 
 
     def setInput(self, instr=None):
@@ -124,11 +122,7 @@ class ActionModule(ActionBase):
         .. versionadded:: 0.2.0
         .. function:: setInput([instr=None])
         """
-        if instr is None:
-            self._instr = '/dev/tty'
-
-        else:
-            self._instr = instr
+        self._instr = instr or '/dev/tty'
 
 
     def _prompt(self, result, msg):
@@ -149,7 +143,7 @@ class ActionModule(ActionBase):
            Added newline, alignment, and formatting functionality.
 
         .. versionchanged:: 1.0.0
-           Added postfix option, choices, and defaults.
+           Added postfix, confirm, choices, and defaults.
 
         .. function:: _prompt(result, msg)
         """
@@ -202,6 +196,9 @@ class ActionModule(ActionBase):
                 if 'align' in m and m['align'] != 'left':
                     return self._fail(result, "Option 'align' is not compatible with option 'ask'.")
 
+                if 'confirm' in m and 'default' in m:
+                    return self._fail(result, "Unexpected 'default' provided with confirmation question.")
+
                 # If no say is provided, just make it blank
                 if 'say' not in m:
                     m['say'] = ""
@@ -212,7 +209,7 @@ class ActionModule(ActionBase):
 
                 # Default to input postfix, if not set
                 if 'postfix' not in m:
-                    m['postfix'] = ":"
+                    m['postfix'] = "?"
 
                 # Convert to terminal input temporarily
                 oldin = sys.stdin
@@ -225,7 +222,16 @@ class ActionModule(ActionBase):
                         sys.stdin = self._instr
 
                     defaultString = ""
-                    if 'default' in m:
+
+                    if 'confirm' in m:
+                        if m['confirm']:
+                            defaultString = " [Yn]"
+                            m['default'] = "y"
+                        else:
+                            defaultString = " [yN]"
+                            m['default'] = "n"
+
+                    elif 'default' in m:
                         defaultString = " [%s]" % m['default']
 
                     # Present empty string if "say" not provided
@@ -238,6 +244,9 @@ class ActionModule(ActionBase):
                     var = raw_input(askstr)
 
                     if var != "":
+                        if 'confirm' in m and var.lower() not in "yn":
+                            continue
+
                         break
 
                     if 'default' in m:
@@ -254,6 +263,9 @@ class ActionModule(ActionBase):
                 if m['trim']:
                     var = var.strip()
 
+                if 'confirm' in m:
+                    var = (var.lower() == "y")
+
                 result['ansible_facts'][m['ask']] = var
 
             # If it's just a message, print it
@@ -268,6 +280,9 @@ class ActionModule(ActionBase):
 
                 if 'trim' in m:
                     return self._fail(result, "Unexpected 'trim' in non-question prompt.")
+
+                if 'confirm' in m:
+                    return self._fail(result, "Unexpected 'confirm' in non-question prompt.")
 
                 if 'align' not in m:
                     m['align'] = 'left'
