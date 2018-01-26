@@ -375,7 +375,7 @@ class TestAsk(unittest.TestCase):
         """
         Test that the _prompt() method fails if 'default' is provided without 'ask'
 
-        .. versionadded:: 1.0.0
+        .. versionadded:: 0.4.0
         .. function:: test_prompt_msg_noask_default_fails()
         """
         self.expected['failed'] = True
@@ -394,7 +394,7 @@ class TestAsk(unittest.TestCase):
         """
         Test that the _prompt() method fails if 'postfix' is provided without 'ask'
 
-        .. versionadded:: 1.0.0
+        .. versionadded:: 0.4.0
         .. function:: test_prompt_msg_noask_postfix_fails()
         """
         self.expected['failed'] = True
@@ -413,7 +413,7 @@ class TestAsk(unittest.TestCase):
         """
         Test that the _prompt() method fails if 'trim' is provided without 'ask'
 
-        .. versionadded:: 1.0.0
+        .. versionadded:: 0.4.0
         .. function:: test_prompt_msg_noask_trim_fails()
         """
         self.expected['failed'] = True
@@ -432,7 +432,7 @@ class TestAsk(unittest.TestCase):
         """
         Test that the _prompt() method fails if 'confirm' is provided without 'ask'
 
-        .. versionadded:: 1.0.0
+        .. versionadded:: 0.4.0
         .. function:: test_prompt_msg_noask_confirm_fails()
         """
         self.expected['failed'] = True
@@ -451,7 +451,7 @@ class TestAsk(unittest.TestCase):
         """
         Test that the _prompt() method fails if given both default and confirm.
 
-        .. versionadded:: 1.0.0
+        .. versionadded:: 0.4.0
         .. function:: test_prompt_msg_confirm_defaults_fails()
         """
         self.expected['failed'] = True
@@ -472,7 +472,7 @@ class TestAsk(unittest.TestCase):
         """
         Test that the _prompt() method repeats an ask if given a blank response with no default.
 
-        .. versionadded:: 1.0.0
+        .. versionadded:: 0.4.0
         .. function:: test_prompt_msg_noask_postfix_fails()
         """
         global counter
@@ -503,7 +503,7 @@ class TestAsk(unittest.TestCase):
         """
         Test that the _prompt() method shows the default in the prompt, if provided.
 
-        .. versionadded:: 1.0.0
+        .. versionadded:: 0.4.0
         .. function:: test_prompt_msg_shows_default()
         """
         with mock.patch('__builtin__.raw_input', return_value="Andrew") as mockinput:
@@ -524,7 +524,7 @@ class TestAsk(unittest.TestCase):
         """
         Test that the _prompt() method sets the fact to the default if provided and no input is given.
 
-        .. versionadded:: 1.0.0
+        .. versionadded:: 0.4.0
         .. function:: test_prompt_msg_defaults()
         """
         with mock.patch('__builtin__.raw_input', return_value="") as mockinput:
@@ -544,7 +544,7 @@ class TestAsk(unittest.TestCase):
         """
         Test that the _prompt() method uses the provided postfix in the prompt.
 
-        .. versionadded:: 1.0.0
+        .. versionadded:: 0.4.0
         .. function:: test_prompt_msg_postfix_custom()
         """
         with mock.patch('__builtin__.raw_input', return_value="") as mockinput:
@@ -565,7 +565,7 @@ class TestAsk(unittest.TestCase):
         """
         Test that the _prompt() method will trim responses by default
 
-        .. versionadded:: 1.0.0
+        .. versionadded:: 0.4.0
         .. function:: test_prompt_msg_trim_default()
         """
         with mock.patch('__builtin__.raw_input', return_value="  trim  value  ") as mockinput:
@@ -581,7 +581,7 @@ class TestAsk(unittest.TestCase):
         """
         Test that the _prompt() method will not trim responses if set to False.
 
-        .. versionadded:: 1.0.0
+        .. versionadded:: 0.4.0
         .. function:: test_prompt_msg_trim_off_valid()
         """
         with mock.patch('__builtin__.raw_input', return_value="  trim  value  ") as mockinput:
@@ -598,7 +598,7 @@ class TestAsk(unittest.TestCase):
         """
         Test that the _prompt() method will repeat if given an invalid response with confirm.
 
-        .. versionadded:: 1.0.0
+        .. versionadded:: 0.4.0
         .. function:: test_prompt_msg_confirm_invalid_repeats()
         """
         global counter
@@ -634,7 +634,7 @@ class TestAsk(unittest.TestCase):
         """
         Test that the _prompt() method will return appropriately with confirm as default.
 
-        .. versionadded:: 1.0.0
+        .. versionadded:: 0.4.0
         .. function:: test_prompt_msg_confirm_blank_default_yes()
         """
         with mock.patch('__builtin__.raw_input', return_value="") as mockinput:
@@ -654,7 +654,7 @@ class TestAsk(unittest.TestCase):
         """
         Test that the _prompt() method will return appropriately with confirm as default.
 
-        .. versionadded:: 1.0.0
+        .. versionadded:: 0.4.0
         .. function:: test_prompt_msg_confirm_blank_default_no()
         """
         with mock.patch('__builtin__.raw_input', return_value="") as mockinput:
@@ -674,7 +674,7 @@ class TestAsk(unittest.TestCase):
         """
         Test that the _prompt() method works with capital responses for confirms.
 
-        .. versionadded:: 1.0.0
+        .. versionadded:: 0.4.0
         .. function:: test_prompt_msg_confirm_capital_valid()
         """
         with mock.patch('__builtin__.raw_input', return_value="Y") as mockinput:

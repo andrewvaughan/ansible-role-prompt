@@ -24,10 +24,13 @@ ActionModule definition for the Ansible prompt action plugin.
 
 __metaclass__ = type
 
+import ansible
 import re
 import sys
 
 from ansible.plugins.action import ActionBase
+from ansible.playbook.task import Task as AnsibleTask
+from ansible.playbook.play_context import PlayContext as AnsiblePlayContext
 
 
 class ActionModule(ActionBase):
@@ -43,14 +46,17 @@ class ActionModule(ActionBase):
     .. versionchanged:: 0.3.0
        Added newline, alignment, and formatting functionality.
 
-    .. versionchanged:: 1.0.0
-       Added field postfix, confirm, choices, and defaults.
+    .. versionchanged:: 0.4.0
+       Added private, confirm, salt, salt_length, postfix, and defaults functionality.
     """
 
+    # Tell Ansible that this plugin does not transfer any files
     TRANSFERS_FILES = False
+
+    # Valid parameters that can be used with this ActionModule
     VALID_PARAMS = [
         'say', 'newline', 'align',
-        'ask', 'postfix', 'default', 'trim', 'confirm'
+        'ask', 'default', 'confirm', 'postfix', 'trim',
     ]
 
 
@@ -63,12 +69,15 @@ class ActionModule(ActionBase):
         .. versionchanged:: 0.2.0
            Precompiled regular expressions for input variable validation.  Added input setting.
 
+        .. versionchanged:: 0.4.0
+           Renamed deprecated methods.
+
         .. function:: __init__(task, connection, play_context, loader, templar, shared_loader_obj)
         """
         super(ActionModule, self).__init__(task, connection, play_context, loader, templar, shared_loader_obj)
 
-        self.setOutput(sys.stdout)
-        self.setInput('/dev/tty')
+        self.setOutputStream(sys.stdout)
+        self.setInputStream('/dev/tty')
 
         # Pre-compile our regex for checking valid variables
         self.rValidVariable = re.compile(r"^[A-Za-z0-9_]+$")
@@ -84,6 +93,7 @@ class ActionModule(ActionBase):
         :returns: a dictionary of results from the module
 
         .. versionadded:: 0.1.0
+
         .. function:: run([tmp=None, task_vars=None])
         """
         task_vars = task_vars or dict()
@@ -101,33 +111,152 @@ class ActionModule(ActionBase):
         return self._prompt(result, args['msg'])
 
 
+    def getOutputStream(self):
+        """
+        Return the output stream object.
+
+        .. versionadded:: 0.4.0
+
+        .. function:: getOutputStream()
+        """
+        return self._outstr
+
+
     def setOutput(self, outstr=None):
+        """
+        Set the output stream to write to.
+
+        .. deprecated:: 0.4.0
+           Use :func:`setOutputStream` instead; will be removed in version 1.0.0
+
+        :kwarg outstr: an output stream to write to (defaults to sys.stdout)
+
+        .. versionadded:: 0.2.0
+
+        .. versionchanged:: 0.4.0
+           Deprecated and renamed to :func:`setOutputStream`
+
+        .. function:: setOutput([outstr=None])
+        """
+        self.setOutputStream(outstr)
+
+
+    def setOutputStream(self, outstr=None):
         """
         Set the output stream to write to.
 
         :kwarg outstr: an output stream to write to (defaults to sys.stdout)
 
-        .. versionadded:: 0.1.0
-        .. function:: setOutput([outstr=None])
+        .. versionadded:: 0.4.0
+
+        .. function:: setOutputStream([outstr=None])
         """
         self._outstr = outstr or sys.stdout
 
 
+    def getInputStream(self):
+        """
+        Return the output stream object.
+
+        .. versionadded:: 0.4.0
+
+        .. function:: getInputStream()
+        """
+        return self._instr
+
+
     def setInput(self, instr=None):
+        """
+        Set the input stream to write to.
+
+        .. deprecated:: 0.4.0
+           Use :func:`setInputStream` instead; will be removed in version 1.0.0
+
+        :kwarg instr: an input stream to read from (defaults to '/dev/tty')
+
+        .. versionadded:: 0.2.0
+
+        .. versionchanged:: 0.4.0
+           Deprecated and renamed to :func:`setInputStream`.
+
+        .. function:: setInput([instr=None])
+        """
+        self.setInputStream(instr)
+
+
+    def setInputStream(self, instr=None):
         """
         Set the input stream to read from.
 
         :kwarg instr: an input stream to read from (defaults to '/dev/tty')
 
-        .. versionadded:: 0.2.0
-        .. function:: setInput([instr=None])
+        .. versionadded:: 0.4.0
+
+        .. function:: setInputStream([instr=None])
         """
         self._instr = instr or '/dev/tty'
 
 
+    def getTaskArgument(self, name):
+        """
+        Return the value of a set task argument.
+
+        :arg name: the argument to look up
+
+        :returns: the value of the named argument
+
+        :raises: KeyError
+
+        .. versionadded:: 0.4.0
+
+        .. function:: getTaskArgument(name)
+        """
+        return self._task.args[name]
+
+
+    def setTaskArgument(self, name, value):
+        """
+        Set the value of a task argument.
+
+        :arg name: the argument to look up
+        :arg value: the value to set the argument to
+
+        .. versionadded:: 0.4.0
+
+        .. function:: setTaskArgument(name, value)
+        """
+        self._task.args[name] = value
+
+
+    def getTaskArguments(self):
+        """
+        Return all of the task arguments.
+
+        :returns: a `dict` containing all of the task arguments
+
+        .. versionadded:: 0.4.0
+
+        .. function:: getTaskArguments()
+        """
+        return self._task.args
+
+
+    def setTaskArguments(self, values):
+        """
+        Clear and set all task arguments.
+
+        :arg values: a `dict` containing all of the task arguments
+
+        .. versionadded:: 0.4.0
+
+        .. function:: setTaskArguments(values)
+        """
+        self._task.args = values
+
+
     def _prompt(self, result, msg):
         """
-        Prompts the user with a message and optionally asks for a response.
+        Prompt the user with a message and, optionally, ask for a response.
 
         :kwarg result: the base result dict to build on
         :kwarg msg: the message provided to parse (string, object, or list)
@@ -142,8 +271,8 @@ class ActionModule(ActionBase):
         .. versionchanged:: 0.3.0
            Added newline, alignment, and formatting functionality.
 
-        .. versionchanged:: 1.0.0
-           Added postfix, confirm, choices, and defaults.
+        .. versionchanged:: 0.4.0
+           Added private, confirm, salt, salt_length, postfix, and defaults functionality.
 
         .. function:: _prompt(result, msg)
         """
@@ -320,6 +449,7 @@ class ActionModule(ActionBase):
         :returns: an updated dict response with the provided failure condition
 
         .. versionadded:: 0.1.0
+
         .. function:: _fail(result, message, *args)
         """
         if not isinstance(result, dict):

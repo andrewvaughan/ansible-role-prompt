@@ -17,14 +17,14 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
-The Ansible prompt action plugin.
+Test suite for the Ansible Prompt action plugin's `say` functionality.
 
 .. moduleauthor:: Andrew Vaughan <hello@andrewvaughan.io>
 """
 
-from .prompt import ActionModule as Prompt
+from . import TestPromptSayInit
 
 
 __all__ = [
-    'Prompt',
+    'TestPromptSayInit',
 ]

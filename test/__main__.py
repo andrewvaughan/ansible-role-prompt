@@ -17,7 +17,7 @@
 # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 """
-Test suite for the Ansible prompt action plugin.
+Test suite for the Ansible Prompt action plugin.
 
 .. moduleauthor:: Andrew Vaughan <hello@andrewvaughan.io>
 """
@@ -26,5 +26,6 @@ import unittest
 
 
 if __name__ == '__main__':
-    testsuite = unittest.TestLoader().discover('.')
-    unittest.TextTestRunner(verbosity=1).run(testsuite)
+    unittest.TextTestRunner(verbosity=1).run(
+        unittest.TestLoader().discover('.')
+    )
