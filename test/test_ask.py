@@ -112,7 +112,7 @@ class TestAsk(unittest.TestCase):
             '/dev/tty'
         )
 
-        with mock.patch('__builtin__.raw_input', return_value='mocked input') as mockinput:
+        with mock.patch('__builtin__.input', return_value='mocked input') as mockinput:
             result = self.prompt._prompt({}, {
                 'say': 'test',
                 'ask': 'varname'
@@ -134,7 +134,7 @@ class TestAsk(unittest.TestCase):
         self.assertEquals(instr, self.prompt._instr)
         self.assertEquals(instr.getvalue(), "")
 
-        with mock.patch('__builtin__.raw_input', return_value='mocked input') as mockinput:
+        with mock.patch('__builtin__.input', return_value='mocked input') as mockinput:
             result = self.prompt._prompt({}, {
                 'say': 'test',
                 'ask': 'varname'
@@ -261,7 +261,7 @@ class TestAsk(unittest.TestCase):
         .. versionadded:: 0.2.0
         .. function:: test_prompt_ask_var_simple_valid()
         """
-        with mock.patch('__builtin__.raw_input', return_value='mocked input') as mockinput:
+        with mock.patch('__builtin__.input', return_value='mocked input') as mockinput:
             result = self.prompt._prompt({}, {
                 'say': 'test',
                 'ask': 'varname'
@@ -277,7 +277,7 @@ class TestAsk(unittest.TestCase):
         .. versionadded:: 0.2.0
         .. function:: test_prompt_ask_var_numbers_valid()
         """
-        with mock.patch('__builtin__.raw_input', return_value='mocked input') as mockinput:
+        with mock.patch('__builtin__.input', return_value='mocked input') as mockinput:
             result = self.prompt._prompt({}, {
                 'say': 'test',
                 'ask': '12345'
@@ -293,7 +293,7 @@ class TestAsk(unittest.TestCase):
         .. versionadded:: 0.2.0
         .. function:: test_prompt_ask_var_unicode_valid()
         """
-        with mock.patch('__builtin__.raw_input', return_value='mocked input') as mockinput:
+        with mock.patch('__builtin__.input', return_value='mocked input') as mockinput:
             result = self.prompt._prompt({}, {
                 'say': 'test',
                 'ask': u'varname'
@@ -309,7 +309,7 @@ class TestAsk(unittest.TestCase):
         .. versionadded:: 0.2.0
         .. function:: test_prompt_ask_var_underscore_valid()
         """
-        with mock.patch('__builtin__.raw_input', return_value='mocked input') as mockinput:
+        with mock.patch('__builtin__.input', return_value='mocked input') as mockinput:
             result = self.prompt._prompt({}, {
                 'say': 'test',
                 'ask': 'var_name'
@@ -325,7 +325,7 @@ class TestAsk(unittest.TestCase):
         .. versionadded:: 0.2.0
         .. function:: test_prompt_ask_say_missing_valid()
         """
-        with mock.patch('__builtin__.raw_input', return_value='mocked input') as mockinput:
+        with mock.patch('__builtin__.input', return_value='mocked input') as mockinput:
             result = self.prompt._prompt({}, {
                 'ask': 'varname'
             })
@@ -490,7 +490,7 @@ class TestAsk(unittest.TestCase):
 
             return ""
 
-        with mock.patch('__builtin__.raw_input', side_effect=return_helper) as mockinput:
+        with mock.patch('__builtin__.input', side_effect=return_helper) as mockinput:
             result = self.prompt._prompt({}, {
                 'ask': 'varname'
             })
@@ -506,7 +506,7 @@ class TestAsk(unittest.TestCase):
         .. versionadded:: 1.0.0
         .. function:: test_prompt_msg_shows_default()
         """
-        with mock.patch('__builtin__.raw_input', return_value="Andrew") as mockinput:
+        with mock.patch('__builtin__.input', return_value="Andrew") as mockinput:
             result = self.prompt._prompt(self.response, {
                 "say": "First Name",
                 "ask": "first_name",
@@ -527,7 +527,7 @@ class TestAsk(unittest.TestCase):
         .. versionadded:: 1.0.0
         .. function:: test_prompt_msg_defaults()
         """
-        with mock.patch('__builtin__.raw_input', return_value="") as mockinput:
+        with mock.patch('__builtin__.input', return_value="") as mockinput:
             result = self.prompt._prompt(self.response, {
                 "say": "First Name",
                 "ask": "first_name",
@@ -547,7 +547,7 @@ class TestAsk(unittest.TestCase):
         .. versionadded:: 1.0.0
         .. function:: test_prompt_msg_postfix_custom()
         """
-        with mock.patch('__builtin__.raw_input', return_value="") as mockinput:
+        with mock.patch('__builtin__.input', return_value="") as mockinput:
             result = self.prompt._prompt(self.response, {
                 "say": "First Name",
                 "ask": "first_name",
@@ -568,7 +568,7 @@ class TestAsk(unittest.TestCase):
         .. versionadded:: 1.0.0
         .. function:: test_prompt_msg_trim_default()
         """
-        with mock.patch('__builtin__.raw_input', return_value="  trim  value  ") as mockinput:
+        with mock.patch('__builtin__.input', return_value="  trim  value  ") as mockinput:
             result = self.prompt._prompt(self.response, {
                 "say": "First Name",
                 "ask": "first_name",
@@ -584,7 +584,7 @@ class TestAsk(unittest.TestCase):
         .. versionadded:: 1.0.0
         .. function:: test_prompt_msg_trim_off_valid()
         """
-        with mock.patch('__builtin__.raw_input', return_value="  trim  value  ") as mockinput:
+        with mock.patch('__builtin__.input', return_value="  trim  value  ") as mockinput:
             result = self.prompt._prompt(self.response, {
                 "say": "First Name",
                 "ask": "first_name",
@@ -616,7 +616,7 @@ class TestAsk(unittest.TestCase):
 
             return "foobar"
 
-        with mock.patch('__builtin__.raw_input', side_effect=return_helper) as mockinput:
+        with mock.patch('__builtin__.input', side_effect=return_helper) as mockinput:
             result = self.prompt._prompt(self.response, {
                 "say": "Continue",
                 "ask": "result",
@@ -637,7 +637,7 @@ class TestAsk(unittest.TestCase):
         .. versionadded:: 1.0.0
         .. function:: test_prompt_msg_confirm_blank_default_yes()
         """
-        with mock.patch('__builtin__.raw_input', return_value="") as mockinput:
+        with mock.patch('__builtin__.input', return_value="") as mockinput:
             result = self.prompt._prompt(self.response, {
                 "say": "Continue",
                 "ask": "result",
@@ -657,7 +657,7 @@ class TestAsk(unittest.TestCase):
         .. versionadded:: 1.0.0
         .. function:: test_prompt_msg_confirm_blank_default_no()
         """
-        with mock.patch('__builtin__.raw_input', return_value="") as mockinput:
+        with mock.patch('__builtin__.input', return_value="") as mockinput:
             result = self.prompt._prompt(self.response, {
                 "say": "Continue",
                 "ask": "result",
@@ -677,7 +677,7 @@ class TestAsk(unittest.TestCase):
         .. versionadded:: 1.0.0
         .. function:: test_prompt_msg_confirm_capital_valid()
         """
-        with mock.patch('__builtin__.raw_input', return_value="Y") as mockinput:
+        with mock.patch('__builtin__.input', return_value="Y") as mockinput:
             result = self.prompt._prompt(self.response, {
                 "say": "Continue",
                 "ask": "result",

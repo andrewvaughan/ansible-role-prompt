@@ -241,7 +241,7 @@ class ActionModule(ActionBase):
                         m['postfix']
                     )
 
-                    var = raw_input(askstr)
+                    var = input(askstr)
 
                     if var != "":
                         if 'confirm' in m and var.lower() not in "yn":
