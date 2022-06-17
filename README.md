@@ -36,7 +36,7 @@ available by the plugin, as detailed in the [Usage Guidelines](#usage).
 
 ### Dependencies
 
-This module has been tested with [Ansibe][ansible] v2.0 and above.  It may work with other versions, but they are not
+This module has been tested with [Ansible][ansible] v2.0 and above.  It may work with other versions, but they are not
 formally supported.  Once Ansible and it's dependencies have been installed, this plugin should be usable.
 
 ## Usage
